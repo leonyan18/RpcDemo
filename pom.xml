@@ -12,7 +12,13 @@
         <module>rpc-net</module>
         <module>rpc-app</module>
         <module>rpc-monitor</module>
+        <module>rpc-common</module>
     </modules>
+    <properties>
+        <netty-all.version>4.1.42.Final</netty-all.version>
+        <kryo.version>2.24.0</kryo.version>
+        <kryo.serializers>0.26</kryo.serializers>
+    </properties>
     <dependencies>
         <dependency>
             <groupId>org.projectlombok</groupId>

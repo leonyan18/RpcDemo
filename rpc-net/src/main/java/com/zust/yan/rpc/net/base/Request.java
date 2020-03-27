@@ -1,6 +1,6 @@
 package com.zust.yan.rpc.net.base;
 
-import com.zust.yan.rpc.net.config.RpcUtils;
+import com.zust.yan.rpc.common.utils.RpcUtils;
 import lombok.Data;
 
 import java.util.concurrent.atomic.LongAdder;
