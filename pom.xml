@@ -11,6 +11,7 @@
     <modules>
         <module>rpc-net</module>
         <module>rpc-app</module>
+        <module>rpc-monitor</module>
     </modules>
     <dependencies>
         <dependency>

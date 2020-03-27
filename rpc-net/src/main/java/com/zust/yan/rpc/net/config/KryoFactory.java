@@ -4,7 +4,6 @@ import com.zust.yan.rpc.net.base.Request;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.serializers.DefaultSerializers;
 import de.javakaffee.kryoserializers.*;
-import org.springframework.context.annotation.Bean;
 
 import java.lang.reflect.InvocationHandler;
 import java.math.BigDecimal;
@@ -30,7 +29,6 @@ public static KryoFactory getDefaultFactory() {
 protected Kryo createKryo() {
   Kryo kryo = new Kryo();
   kryo.setRegistrationRequired(false);
-  kryo.register(Bean.class);
   kryo.register(Arrays.asList("").getClass(), new ArraysAsListSerializer());
   kryo.register(GregorianCalendar.class, new GregorianCalendarSerializer());
   kryo.register(InvocationHandler.class, new JdkProxySerializer());

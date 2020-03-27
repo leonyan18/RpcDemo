@@ -21,7 +21,9 @@
         </plugins>
     </build>
     <properties>
-        <netty-all.version>4.1.6.Final</netty-all.version>
+        <netty-all.version>4.1.42.Final</netty-all.version>
+        <kryo.version>2.24.0</kryo.version>
+        <kryo.serializers>0.26</kryo.serializers>
     </properties>
     <artifactId>rpc-net</artifactId>
     <dependencies>
@@ -33,12 +35,12 @@
         <dependency>
             <groupId>com.esotericsoftware.kryo</groupId>
             <artifactId>kryo</artifactId>
-            <version>2.24.0</version>
+            <version>${kryo.version}</version>
         </dependency>
         <dependency>
             <groupId>de.javakaffee</groupId>
             <artifactId>kryo-serializers</artifactId>
-            <version>0.26</version>
+            <version>${kryo.serializers}</version>
         </dependency>
 
     </dependencies>
