@@ -1,8 +1,7 @@
 package com.zust.yan.rpc.app;
 
-import com.zust.yan.rpc.app.Sad;
 import com.zust.yan.rpc.app.handler.DefaultServerMessageHandler;
-import com.zust.yan.rpc.net.base.NetConfigInfo;
+import com.zust.yan.rpc.common.base.NetConfigInfo;
 import com.zust.yan.rpc.net.base.Server;
 
 public class TestServerProxy {

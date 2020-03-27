@@ -1,5 +1,6 @@
 package com.zust.yan.rpc.net.base;
 
+import com.zust.yan.rpc.common.base.NetConfigInfo;
 import com.zust.yan.rpc.net.handler.DefalutReceiveHandler;
 import com.zust.yan.rpc.net.handler.KryoDecoder;
 import com.zust.yan.rpc.net.handler.KryoEncoder;

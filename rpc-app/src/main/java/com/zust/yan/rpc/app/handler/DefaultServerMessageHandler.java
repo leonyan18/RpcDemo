@@ -27,18 +27,23 @@ public class DefaultServerMessageHandler extends ServerMessageHandler {
             Request request = (Request) msg;
             Response response = new Response();
             response.setRequestId(request.getRequestId());
+            long handleTime=System.currentTimeMillis();
+            response.setHandleStartTime(handleTime);
             if (request.getData() instanceof RequestMethodInfo) {
                 RequestMethodInfo requestMethodInfo = (RequestMethodInfo) request.getData();
                 Object object = objectMap.get(requestMethodInfo.getClassName());
                 try {
                     Method method = object.getClass().getMethod(requestMethodInfo.getMethodName(), requestMethodInfo.getParameterTypes());
                     method.setAccessible(true);
+
                     Object result = method.invoke(object, requestMethodInfo.getArgs());
                     response.setData(result);
                 } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
                     e.printStackTrace();
                 }
             }
+            handleTime=System.currentTimeMillis();
+            response.setHandleEndTime(handleTime);
             channel.writeAndFlush(response);
         });
     }

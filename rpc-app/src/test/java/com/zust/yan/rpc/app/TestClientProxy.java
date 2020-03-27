@@ -1,9 +1,8 @@
 package com.zust.yan.rpc.app;
 
 import com.zust.yan.rpc.app.handler.DefaultInvocationHandler;
-import com.zust.yan.rpc.app.Sad;
 import com.zust.yan.rpc.app.factory.BeanProxyFactory;
-import com.zust.yan.rpc.net.base.NetConfigInfo;
+import com.zust.yan.rpc.common.base.NetConfigInfo;
 
 public class TestClientProxy {
     public static void main(String[] args) {

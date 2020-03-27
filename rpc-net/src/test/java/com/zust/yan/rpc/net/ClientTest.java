@@ -2,7 +2,7 @@ package com.zust.yan.rpc.net;
 
 import com.zust.yan.rpc.net.base.Client;
 import com.zust.yan.rpc.net.base.DefaultFuture;
-import com.zust.yan.rpc.net.base.NetConfigInfo;
+import com.zust.yan.rpc.common.base.NetConfigInfo;
 import com.zust.yan.rpc.net.base.Request;
 
 public class ClientTest {

@@ -1,4 +1,4 @@
-package com.zust.yan.rpc.net.base;
+package com.zust.yan.rpc.common.base;
 
 import lombok.Builder;
 import lombok.Data;
