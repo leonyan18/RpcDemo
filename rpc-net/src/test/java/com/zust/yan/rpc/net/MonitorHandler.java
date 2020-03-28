@@ -1,18 +1,17 @@
-package com.zust.yan.rpc.net.handler;
+package com.zust.yan.rpc.net;
 
-import com.zust.yan.rpc.net.base.DefaultFuture;
+import com.zust.yan.rpc.net.base.Request;
 import com.zust.yan.rpc.net.base.Response;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
-public class DefalutReceiveHandler extends SimpleChannelInboundHandler<Object> {
+public class MonitorHandler extends SimpleChannelInboundHandler<Object> {
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception {
-        if(msg!=null){
-            if(msg instanceof Response){
-                DefaultFuture.handleMsg((Response) msg);
-            }
-        }
+        System.out.println(msg);
+        Request request = (Request) msg;
+        ctx.writeAndFlush(new Response(request.getRequestId(), "test"));
     }
 
     @Override

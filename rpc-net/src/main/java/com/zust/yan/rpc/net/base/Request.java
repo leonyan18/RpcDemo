@@ -3,6 +3,7 @@ package com.zust.yan.rpc.net.base;
 import com.zust.yan.rpc.common.utils.RpcUtils;
 import lombok.Data;
 
+import java.util.List;
 import java.util.concurrent.atomic.LongAdder;
 
 @Data
@@ -10,6 +11,7 @@ public class Request {
     private static LongAdder adder = new LongAdder();
     private Long requestId;
     private Object data;
+    private Long toRequestId;
     private Long requestTime;
     private Long receiveTime;
     private Long handleEndTime;

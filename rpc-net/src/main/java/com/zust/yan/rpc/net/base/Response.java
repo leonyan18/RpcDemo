@@ -2,10 +2,13 @@ package com.zust.yan.rpc.net.base;
 
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class Response {
     private Long requestId;
     private Object data;
+    private Long toRequestId;
     private Long requestTime;
     private Long receiveTime;
     private Long handleEndTime;

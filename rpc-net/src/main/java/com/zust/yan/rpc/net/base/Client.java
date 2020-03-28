@@ -16,6 +16,10 @@ import java.util.List;
 
 public class Client {
     private NetConfigInfo info;
+    private static final int CLOSED=-1;
+    private static final int OPEND=1;
+    private static final int INITAL=1;
+    private Integer state=0;
     private ChannelFuture future;
     private EventLoopGroup group;
     private List<ChannelHandler> channelHandler;
@@ -25,6 +29,7 @@ public class Client {
     }
 
     public Client(NetConfigInfo info) {
+        state=0;
         channelHandler=new ArrayList<ChannelHandler>(5);
         this.info = info;
     }
@@ -53,16 +58,20 @@ public class Client {
                     }
                 });
         future = b.connect().sync();
+        state=1;
     }
 
     public void close() throws InterruptedException {
         future.channel().close();
         group.shutdownGracefully().sync();
+        state=-1;
     }
 
     public DefaultFuture send(Request request){
         future.channel().writeAndFlush(request);
         return new DefaultFuture(future.channel(),request);
     }
-
+    public Boolean isClosed(){
+        return state.equals(CLOSED);
+    }
 }

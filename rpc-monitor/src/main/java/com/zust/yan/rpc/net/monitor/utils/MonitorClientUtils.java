@@ -14,15 +14,16 @@ import java.util.concurrent.atomic.LongAdder;
 
 @Slf4j
 public class MonitorClientUtils {
-    private volatile static List<NetConfigInfo> monitorInfos=
+    private volatile static List<NetConfigInfo> monitorInfos =
             Arrays.asList(NetConfigInfo.builder()
                     .address("127.0.0.1")
-                    .port(8887)
+                    .port(8886)
                     .build());
     private static LongAdder monitorIndex = new LongAdder();
     private static Map<NetConfigInfo, Client> clientMap = new ConcurrentHashMap<>();
 
     public static void sendToMonitor(Request request) {
+        log.info("sendToMonitor :startTime" + System.currentTimeMillis());
         if (monitorInfos == null) {
             monitorInfos = RpcUtils.getMonitorInfos();
         }
@@ -35,19 +36,33 @@ public class MonitorClientUtils {
         if (pos > Integer.MAX_VALUE - 10) {
             monitorIndex.reset();
         }
-        NetConfigInfo netConfigInfo = monitorInfos.get(pos%monitorInfos.size());
+        NetConfigInfo netConfigInfo = monitorInfos.get(pos % monitorInfos.size());
         Client client = null;
-        if (clientMap.containsKey(netConfigInfo)) {
-            client = clientMap.get(netConfigInfo);
-        } else {
-            client = new Client(netConfigInfo);
-            try {
+        try {
+            if (clientMap.containsKey(netConfigInfo)) {
+                client = clientMap.get(netConfigInfo);
+            } else {
+                log.info("MonitorClient created");
+                client = new Client(netConfigInfo);
+                clientMap.put(netConfigInfo, client);
                 client.start();
-            } catch (InterruptedException e) {
-                log.error("MonitorUtils client start error");
             }
+            client.send(request);
+            monitorIndex.increment();
+        } catch (InterruptedException e) {
+            // 删除异常连接
+            clientMap.remove(netConfigInfo);
+            e.printStackTrace();
+            log.error("MonitorUtils client unknown error");
+            if (!client.isClosed()) {
+                try {
+                    client.close();
+                } catch (InterruptedException ex) {
+                    ex.printStackTrace();
+                    log.error("MonitorUtils client close error");
+                }
+            }
+            log.info("sendToMonitor :endTime" + System.currentTimeMillis());
         }
-        client.send(request);
-        monitorIndex.increment();
     }
 }

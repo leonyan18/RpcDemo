@@ -17,6 +17,7 @@ public class RequestMethodInfo {
     public RequestMethodInfo() {
     }
     public RequestMethodInfo(Method method, Object[] args) {
+//        System.out.println(method.getDeclaringClass());
         this.methodName = method.getName();
         this.returnType=method.getReturnType().getName();
         this.parameterTypes=method.getParameterTypes();

@@ -12,25 +12,28 @@ import java.util.concurrent.locks.ReentrantLock;
  * @author yan
  */
 
-public class DefaultFuture  {
-    private static Map<Long, Channel> CHANNELS=new ConcurrentHashMap<Long, Channel>(20);
-    private static Map<Long, DefaultFuture> FUTURES=new ConcurrentHashMap<Long, DefaultFuture>(20);
+public class DefaultFuture {
+    private static Map<Long, Channel> CHANNELS = new ConcurrentHashMap<Long, Channel>(20);
+    private static Map<Long, DefaultFuture> FUTURES = new ConcurrentHashMap<Long, DefaultFuture>(20);
     private volatile Response res;
     private volatile Request request;
     private Lock lock = new ReentrantLock();
-    private Condition receive =lock.newCondition();
+    private Condition receive = lock.newCondition();
 
-    public DefaultFuture(Channel channel, Request request){
-        this.request=request;
+    public DefaultFuture(Channel channel, Request request) {
+        this.request = request;
         FUTURES.put(request.getRequestId(), this);
         CHANNELS.put(request.getRequestId(), channel);
     }
-    public static void handleMsg(Response response){
-        DefaultFuture defaultFuture=FUTURES.get(response.getRequestId());
+
+    public static void handleMsg(Response response) {
+//        System.out.println(response);
+        DefaultFuture defaultFuture = FUTURES.get(response.getRequestId());
         defaultFuture.setRes(response);
         defaultFuture.wakeUpBlock();
     }
-    public void wakeUpBlock(){
+
+    public void wakeUpBlock() {
         lock.lock();
         try {
             receive.signal();
@@ -38,6 +41,7 @@ public class DefaultFuture  {
             lock.unlock();
         }
     }
+
     public Response getRes() {
         return res;
     }
@@ -47,13 +51,13 @@ public class DefaultFuture  {
     }
 
     public Response getResBlock() {
-        if(null == res){
+        if (null == res) {
             lock.lock();
             try {
-                if(res==null){
+                if (res == null) {
                     receive.await();
                 }
-            }catch (InterruptedException e){
+            } catch (InterruptedException e) {
                 e.printStackTrace();
             } finally {
                 lock.unlock();
