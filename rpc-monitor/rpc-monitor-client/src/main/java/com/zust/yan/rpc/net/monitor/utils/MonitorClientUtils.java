@@ -14,29 +14,16 @@ import java.util.concurrent.atomic.LongAdder;
 
 @Slf4j
 public class MonitorClientUtils {
-    private volatile static List<NetConfigInfo> monitorInfos =
-            Arrays.asList(NetConfigInfo.builder()
-                    .host("127.0.0.1")
-                    .port(8886)
-                    .build());
     private static LongAdder monitorIndex = new LongAdder();
     private static Map<NetConfigInfo, Client> clientMap = new ConcurrentHashMap<>();
 
     public static void sendToMonitor(Request request) {
         log.info("sendToMonitor :startTime" + System.currentTimeMillis());
-        if (monitorInfos == null) {
-            monitorInfos = RpcUtils.getMonitorInfos();
-        }
-        if (monitorInfos == null) {
+        NetConfigInfo netConfigInfo = RpcUtils.getMonitorInfo();
+        if (netConfigInfo == null) {
             log.error("MonitorUtils monitorInfos not init");
             return;
         }
-        int pos = (int) monitorIndex.longValue();
-        // 考虑并发其实影响也不大
-        if (pos > Integer.MAX_VALUE - 10) {
-            monitorIndex.reset();
-        }
-        NetConfigInfo netConfigInfo = monitorInfos.get(pos % monitorInfos.size());
         Client client = null;
         try {
             if (clientMap.containsKey(netConfigInfo)) {

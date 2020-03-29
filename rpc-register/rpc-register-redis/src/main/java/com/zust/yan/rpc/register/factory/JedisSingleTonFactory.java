@@ -2,7 +2,6 @@ package com.zust.yan.rpc.register.factory;
 
 import com.zust.yan.rpc.common.base.NetConfigInfo;
 import com.zust.yan.rpc.common.utils.RpcUtils;
-import org.apache.commons.lang.StringUtils;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;

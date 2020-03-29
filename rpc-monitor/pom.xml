@@ -10,6 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>rpc-monitor</artifactId>
+    <packaging>pom</packaging>
     <build>
         <plugins>
             <plugin>
@@ -22,6 +23,10 @@
             </plugin>
         </plugins>
     </build>
+    <modules>
+        <module>rpc-monitor-client</module>
+        <module>rpc-monitor-server</module>
+    </modules>
     <dependencies>
         <dependency>
             <artifactId>rpc-net</artifactId>
