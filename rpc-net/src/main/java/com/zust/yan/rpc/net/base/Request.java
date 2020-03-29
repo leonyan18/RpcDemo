@@ -9,6 +9,10 @@ import java.util.concurrent.atomic.LongAdder;
 @Data
 public class Request {
     private static LongAdder adder = new LongAdder();
+    static {
+        // 初始化为当前时间戳
+        adder.add(System.currentTimeMillis());
+    }
     private Long requestId;
     private Object data;
     private Long toRequestId;

@@ -6,8 +6,9 @@ import lombok.Data;
 @Data
 @Builder
 public class NetConfigInfo {
-    private String address;
+    private String host;
     private int port;
+    private String password;
     private int timeOut;
     private int retryTimes;
 }

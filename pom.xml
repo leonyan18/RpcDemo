@@ -13,6 +13,7 @@
         <module>rpc-app</module>
         <module>rpc-monitor</module>
         <module>rpc-common</module>
+        <module>rpc-register</module>
     </modules>
     <properties>
         <netty-all.version>4.1.42.Final</netty-all.version>
@@ -21,6 +22,11 @@
         <lombok.version>1.16.10</lombok.version>
         <slf4j.version>1.7.25</slf4j.version>
         <logback.version>1.2.3</logback.version>
+        <jedis.version>2.9.0</jedis.version>
+        <slf4j.version>1.7.25</slf4j.version>
+        <logback.version>1.2.3</logback.version>
+        <commons.lang.version>2.6</commons.lang.version>
+        <fastjson.version>1.2.50</fastjson.version>
     </properties>
 
 </project>

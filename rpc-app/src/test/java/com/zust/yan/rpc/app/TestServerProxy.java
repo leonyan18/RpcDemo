@@ -9,7 +9,7 @@ import com.zust.yan.rpc.net.base.Server;
 public class TestServerProxy {
     public static void main(String[] args) {
         NetConfigInfo info=NetConfigInfo.builder()
-                .address("127.0.0.1")
+                .host("127.0.0.1")
                 .port(8888)
                 .build();
         DefaultServerMessageHandler.addHandler((Happy) word -> "okkkkkkkk");

@@ -7,7 +7,7 @@ import com.zust.yan.rpc.common.base.NetConfigInfo;
 public class TestClientProxy {
     public static void main(String[] args) {
         NetConfigInfo info=NetConfigInfo.builder()
-                .address("127.0.0.1")
+                .host("127.0.0.1")
                 .port(8888)
                 .build();
         DefaultInvocationHandler invocationHandler=new DefaultInvocationHandler();

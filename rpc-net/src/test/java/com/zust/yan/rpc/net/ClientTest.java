@@ -8,7 +8,7 @@ import com.zust.yan.rpc.net.base.Request;
 public class ClientTest {
     public static void main(String[] args) throws InterruptedException {
         NetConfigInfo info=NetConfigInfo.builder()
-                .address("127.0.0.1")
+                .host("127.0.0.1")
                 .port(8888)
                 .build();
         Client client=new Client(info);

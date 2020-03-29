@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.LongAdder;
 public class MonitorClientUtils {
     private volatile static List<NetConfigInfo> monitorInfos =
             Arrays.asList(NetConfigInfo.builder()
-                    .address("127.0.0.1")
+                    .host("127.0.0.1")
                     .port(8886)
                     .build());
     private static LongAdder monitorIndex = new LongAdder();

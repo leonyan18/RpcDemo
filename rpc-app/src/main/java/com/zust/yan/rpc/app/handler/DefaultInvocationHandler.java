@@ -51,7 +51,7 @@ public class DefaultInvocationHandler implements InvocationHandler {
     private void createClient() throws InterruptedException {
         log.info("createClient");
         NetConfigInfo info = NetConfigInfo.builder()
-                .address("127.0.0.1")
+                .host("127.0.0.1")
                 .port(8888)
                 .build();
         client = new Client(info);

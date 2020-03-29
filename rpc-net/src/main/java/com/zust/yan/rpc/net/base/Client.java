@@ -47,7 +47,7 @@ public class Client {
         Bootstrap b = new Bootstrap();
         b.group(group)
                 .channel(NioSocketChannel.class)
-                .remoteAddress(new InetSocketAddress(info.getAddress(), info.getPort()))
+                .remoteAddress(new InetSocketAddress(info.getHost(), info.getPort()))
                 .handler(new ChannelInitializer<SocketChannel>() {
                     @Override
                     public void initChannel(SocketChannel ch)
