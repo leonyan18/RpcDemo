@@ -2,6 +2,7 @@ package com.zust.yan.rpc.spring.config;
 
 import com.zust.yan.rpc.app.factory.BeanProxyFactory;
 import com.zust.yan.rpc.spring.annotation.RpcServiceConsumer;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.ApplicationContext;
@@ -13,6 +14,7 @@ import java.lang.reflect.Field;
  * @author yan
  */
 @Component
+@Slf4j
 public class RpcServiceInjectProcessor implements BeanPostProcessor {
 
     @Override
@@ -25,6 +27,7 @@ public class RpcServiceInjectProcessor implements BeanPostProcessor {
                 field.setAccessible(true);
                 try {
                     field.set(bean, BeanProxyFactory.createProxy(field.getType()));
+                    log.info("set field"+field.getType().getName());
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
                 }

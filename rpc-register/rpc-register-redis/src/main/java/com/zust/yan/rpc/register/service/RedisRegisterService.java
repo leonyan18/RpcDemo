@@ -46,7 +46,10 @@ public class RedisRegisterService implements RegisterService {
     }
 
     @Override
-    public void sync() {
+    public void sync(Boolean redo) {
+        if (redo) {
+            RpcUtils.clearServiceNetInfo();
+        }
         Map<String, List<NetConfigInfo>> allServiceNetInfos = getAllServiceNetInfo();
         for (String s : allServiceNetInfos.keySet()) {
             for (NetConfigInfo netConfigInfo : allServiceNetInfos.get(s)) {

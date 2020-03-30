@@ -52,9 +52,13 @@ public class LoadStrategy {
             providerNetInfoMap.put(clazz, new ArrayList<>());
         }
         List<NetConfigInfo> netConfigInfoList = providerNetInfoMap.get(clazz);
-        // todo 复杂度？
+        // 复杂度？
         if (!netConfigInfoList.contains(netConfigInfo)) {
             providerNetInfoMap.get(clazz).add(netConfigInfo);
         }
+    }
+
+    public void clearServiceNetInfo() {
+        providerNetInfoMap.clear();
     }
 }

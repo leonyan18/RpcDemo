@@ -74,6 +74,10 @@ public class RpcUtils {
         return loadStrategy.getRegisterType();
     }
 
+    public static void clearServiceNetInfo() {
+        loadStrategy.clearServiceNetInfo();
+    }
+
     public void init() {
         InputStream in = this.getClass().getResourceAsStream("/test.properties");
         Properties props = new Properties();

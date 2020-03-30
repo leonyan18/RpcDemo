@@ -16,7 +16,7 @@ public class TestClientProxy {
         RpcUtils.addMonitorInfo(monitorInfo);
         Sad sad = BeanProxyFactory.createProxy(Sad.class);
         RegisterService registerService = new RedisRegisterService();
-        registerService.sync();
+        registerService.sync(true);
         System.out.println(sad.sad("sd"));
         System.out.println(sad.sad("sd"));
         System.out.println(sad.sad("sd"));

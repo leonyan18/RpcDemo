@@ -7,5 +7,5 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ComponentScans({@ComponentScan(basePackages = "com.zust.yan.rpc.spring.config"),
         @ComponentScan(basePackages = "com.zust.yan.rpc.spring.listener")})
-public class RootConfig {
+public class RpcRootConfig {
 }

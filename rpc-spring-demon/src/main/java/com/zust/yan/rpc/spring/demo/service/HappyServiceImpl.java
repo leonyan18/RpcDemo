@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
  * @author yan
  */
 @Component
-public class HappyServiceImpl implements Happy {
+public class HappyServiceImpl implements Happy{
     @RpcServiceConsumer
     Sad sadService;
 

@@ -52,7 +52,7 @@ public class DefaultInvocationHandler implements InvocationHandler {
     private void createClient(String clazz) throws InterruptedException {
         log.info("createClient");
         // 如果获取不到自己获取，初始化顺序可能不一样所以放到这里来懒加载，用的时候在去获取信息
-        System.out.println(clazz);
+//        System.out.println(clazz);
         if (netConfigInfo == null) {
             netConfigInfo = RpcUtils.getProviderNetInfo(clazz);
         }
