@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zust.yan.rpc.monitor.app.mapper.RequestDataMapper">
+    <resultMap id="BaseResultMap" type="com.zust.yan.rpc.monitor.app.entity.RequestData">
+        <result column="id" jdbcType="INTEGER" property="requestId"/>
+        <result column="to_request_id" jdbcType="INTEGER" property="toRequestId"/>
+        <result column="request_time" jdbcType="TIMESTAMP" property="requestTime"/>
+        <result column="receive_time" jdbcType="TIMESTAMP" property="receiveTime"/>
+        <result column="handle_end_time" jdbcType="TIMESTAMP" property="handleEndTime"/>
+        <result column="handle_start_time" jdbcType="TIMESTAMP" property="handleStartTime"/>
+        <result column="clazz" jdbcType="VARCHAR" property="clazz"/>
+        <result column="method" jdbcType="VARCHAR" property="method"/>
+        <result column="parameters" jdbcType="VARCHAR" property="parameters"/>
+    </resultMap>
+
+    <select id="pagingRequestData" resultMap="BaseResultMap">
+        select * from request limit #{pos} , #{pageSize}
+    </select>
+
+</mapper>

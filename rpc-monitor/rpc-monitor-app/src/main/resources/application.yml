@@ -1,0 +1,21 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/rpc?characterEncoding=utf-8&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
+    username: root
+    password: yanchenxi
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+mybatis:
+  mapper-locations: classpath:mapping/*Mapper.xml
+  type-aliases-package: com.zust.yan.rpc.monitor.app.entity
+
+#showSql
+logging:
+  level:
+    com:
+      zust:
+        yan:
+          rpc:
+            monitor:
+              app:
+                mapper: debug

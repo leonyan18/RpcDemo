@@ -1,16 +1,19 @@
 package com.zust.yan.rpc.common.utils;
 
-import com.zust.yan.rpc.common.base.NetConfigInfo;
 import com.zust.yan.rpc.common.base.LoadStrategy;
+import com.zust.yan.rpc.common.base.NetConfigInfo;
 import com.zust.yan.rpc.common.base.ThreadPoolInfo;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.*;
-import java.util.concurrent.*;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.concurrent.Executor;
 
 /**
  * @author yan
@@ -19,6 +22,7 @@ import java.util.concurrent.*;
 public class RpcUtils {
     private static ThreadPoolInfo threadPoolInfo = new ThreadPoolInfo();
     private static LoadStrategy loadStrategy = new LoadStrategy();
+
 
     public static int getMachineCode() {
         return 10005;
@@ -78,16 +82,20 @@ public class RpcUtils {
         loadStrategy.clearServiceNetInfo();
     }
 
-    public void init() {
-        InputStream in = this.getClass().getResourceAsStream("/test.properties");
+    public static void init() {
+        InputStream in = RpcUtils.class.getResourceAsStream("/rpc.properties");
         Properties props = new Properties();
         InputStreamReader inputStreamReader = null;
         try {
-            inputStreamReader = new InputStreamReader(in, "UTF-8");
+            inputStreamReader = new InputStreamReader(in, StandardCharsets.UTF_8);
             props.load(inputStreamReader);
-            PropertiesKeyHandler.handleLoadStrategyProperties(props,loadStrategy);
+            PropertiesKeyHandler.handleLoadStrategyProperties(props, loadStrategy);
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void main(String[] args) {
+        RpcUtils.init();
     }
 }

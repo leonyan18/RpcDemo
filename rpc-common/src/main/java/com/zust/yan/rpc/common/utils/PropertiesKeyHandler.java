@@ -20,28 +20,28 @@ public class PropertiesKeyHandler {
             return;
         }
         String providerStrategy = properties.getProperty(PROVIDER_STRATEGY);
-        if (StringUtils.isEmpty(providerStrategy)) {
+        if (!StringUtils.isEmpty(providerStrategy)) {
             loadStrategy.setProviderStrategy(providerStrategy);
         }
         String monitorStrategy = properties.getProperty(MONITOR_STRATEGY);
-        if (StringUtils.isEmpty(monitorStrategy)) {
+        if (!StringUtils.isEmpty(monitorStrategy)) {
             loadStrategy.setMonitorStrategy(monitorStrategy);
         }
         String type = properties.getProperty(REGISTER_TYPE);
-        if (StringUtils.isEmpty(type)) {
+        if (!StringUtils.isEmpty(type)) {
             loadStrategy.setRegisterType(type);
         }
         NetConfigInfo netConfigInfo = loadStrategy.getRegisterNetConfigInfo();
         String host = properties.getProperty(REGISTER_HOST);
-        if (StringUtils.isEmpty(host)) {
+        if (!StringUtils.isEmpty(host)) {
             netConfigInfo.setHost(host);
         }
         String port = properties.getProperty(REGISTER_PORT);
-        if (StringUtils.isEmpty(port)) {
+        if (!StringUtils.isEmpty(port)) {
             netConfigInfo.setPort(Integer.valueOf(port));
         }
         String password = properties.getProperty(REGISTER_PASSWORD);
-        if (StringUtils.isEmpty(password)) {
+        if (!StringUtils.isEmpty(password)) {
             netConfigInfo.setPassword(password);
         }
     }

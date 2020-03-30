@@ -28,6 +28,7 @@ public class ServiceExportListener implements ApplicationListener<ContextRefresh
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
         log.info("ServiceExportListener start");
+        RpcUtils.init();
         ApplicationContext applicationContext = event.getApplicationContext();
         Map<String, Object> objectMap = applicationContext.getBeansWithAnnotation(RpcServiceProvider.class);
         DefaultServerMessageHandler.addHandlers(objectMap);
