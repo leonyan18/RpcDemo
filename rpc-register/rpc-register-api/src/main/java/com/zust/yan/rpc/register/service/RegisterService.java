@@ -13,4 +13,6 @@ public interface RegisterService {
     void registerService(String host, int port, String clazz);
 
     void removeResistedService(String host, int port, String clazz);
+
+    void sync();
 }

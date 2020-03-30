@@ -5,9 +5,8 @@ import java.lang.annotation.*;
 /**
  * @author yan
  */
-@Target({ElementType.TYPE})
+@Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface RpcServiceConsumer {
-    int configId() default 0;
 }

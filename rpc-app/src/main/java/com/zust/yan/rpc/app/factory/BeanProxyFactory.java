@@ -15,19 +15,11 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author yan
  */
 public class BeanProxyFactory {
-    // 由于没请求的id不一样，不存在收到不同response的情况所以不需要生成每个不同的代理类
-    public static Map<NetConfigInfo, Object> proxyMap = new ConcurrentHashMap<>(20);
 
     public static <T> T createProxy(Class<T> interfaceClass) {
-        NetConfigInfo netConfigInfo = RpcUtils.getProviderNetInfo(interfaceClass.getName());
-        T proxy = (T) proxyMap.get(netConfigInfo);
-        if (proxy == null) {
-            // object和defaultInvocationHandler 一对一
-            DefaultInvocationHandler defaultInvocationHandler = new DefaultInvocationHandler();
-            defaultInvocationHandler.setNetConfigInfo(netConfigInfo);
-            proxy = (T) Proxy.newProxyInstance(interfaceClass.getClassLoader(),
-                    new Class<?>[]{interfaceClass}, defaultInvocationHandler);
-        }
-        return proxy;
+        // 先不创建网络地址相关的，初始化顺序不确定，先给引用
+        DefaultInvocationHandler defaultInvocationHandler = new DefaultInvocationHandler();
+        return (T) Proxy.newProxyInstance(interfaceClass.getClassLoader(),
+                new Class<?>[]{interfaceClass}, defaultInvocationHandler);
     }
 }

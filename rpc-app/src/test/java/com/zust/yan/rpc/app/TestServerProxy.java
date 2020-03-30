@@ -1,28 +1,29 @@
 package com.zust.yan.rpc.app;
 
 import com.zust.yan.rpc.app.factory.BeanProxyFactory;
-import com.zust.yan.rpc.app.handler.DefaultInvocationHandler;
 import com.zust.yan.rpc.app.handler.DefaultServerMessageHandler;
 import com.zust.yan.rpc.common.base.NetConfigInfo;
 import com.zust.yan.rpc.common.utils.RpcUtils;
 import com.zust.yan.rpc.net.base.Server;
+import com.zust.yan.rpc.register.service.RedisRegisterService;
+import com.zust.yan.rpc.register.service.RegisterService;
 
 public class TestServerProxy {
     public static void main(String[] args) {
-        NetConfigInfo info = NetConfigInfo.builder()
-                .host("127.0.0.1")
-                .port(8888)
-                .build();
-        NetConfigInfo monitorInfo=NetConfigInfo.builder()
+        NetConfigInfo monitorInfo = NetConfigInfo.builder()
                 .host("127.0.0.1")
                 .port(8886)
                 .build();
-        RpcUtils.addProviderNetInfo(Happy.class.getName(), info);
+        NetConfigInfo local = RpcUtils.getLocalServerNetInfo();
+        RegisterService registerService = new RedisRegisterService();
+        registerService.registerService(local.getHost(), local.getPort(), Happy.class.getName());
+        registerService.registerService(local.getHost(), local.getPort(), Sad.class.getName());
         RpcUtils.addMonitorInfo(monitorInfo);
         DefaultServerMessageHandler.addHandler((Happy) word -> "okkkkkkkk");
         Happy happy = BeanProxyFactory.createProxy(Happy.class);
         DefaultServerMessageHandler.addHandler((Sad) word -> happy.happy("dssd"));
-        Server server = new Server(info, DefaultServerMessageHandler::new);
+        Server server = new Server(RpcUtils.getLocalServerNetInfo(), DefaultServerMessageHandler::new);
+        registerService.sync();
         server.start();
     }
 }

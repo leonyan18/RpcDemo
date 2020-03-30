@@ -16,8 +16,8 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>6</source>
-                    <target>6</target>
+                    <source>8</source>
+                    <target>8</target>
                 </configuration>
             </plugin>
         </plugins>
@@ -28,6 +28,18 @@
         <junit.version>4.12</junit.version>
     </properties>
     <dependencies>
+        <dependency>
+            <groupId>com.zust.yan</groupId>
+            <artifactId>rpc-register-api</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.zust.yan</groupId>
+            <artifactId>rpc-register-redis</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
         <dependency>
             <groupId>com.zust.yan</groupId>
             <artifactId>rpc-app</artifactId>
@@ -64,18 +76,6 @@
             <artifactId>spring-aop</artifactId>
             <version>${org.springframework.version}</version>
         </dependency>
-        <!-- Spring aspects依赖 -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-aspects</artifactId>
-            <version>${org.springframework.version}</version>
-        </dependency>
-        <!-- aspectj依赖 -->
-        <dependency>
-            <groupId>org.aspectj</groupId>
-            <artifactId>aspectjrt</artifactId>
-            <version>1.9.4</version>
-        </dependency>
 
 
         <!-- commons-logging依赖 -->
@@ -85,45 +85,6 @@
             <version>${commons-logging.version}</version>
         </dependency>
 
-        <!-- Spring jdbc依赖 -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-jdbc</artifactId>
-            <version>${org.springframework.version}</version>
-        </dependency>
-        <!--Spring事物依赖 -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-tx</artifactId>
-            <version>${org.springframework.version}</version>
-        </dependency>
-
-        <!-- Spring web依赖 -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-web</artifactId>
-            <version>${org.springframework.version}</version>
-        </dependency>
-        <!--Spring webmvc依赖 -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-webmvc</artifactId>
-            <version>${org.springframework.version}</version>
-        </dependency>
-        <!-- Spring test依赖 -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-test</artifactId>
-            <version>${org.springframework.version}</version>
-        </dependency>
-
-        <!-- junit 单元测试依耐 -->
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
 </project>

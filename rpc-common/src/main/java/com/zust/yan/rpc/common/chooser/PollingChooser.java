@@ -13,6 +13,12 @@ public class PollingChooser implements Chooser {
 
     @Override
     public NetConfigInfo chooseNetConfigInfo(List<NetConfigInfo> netConfigInfos) {
+        if (netConfigInfos == null || netConfigInfos.isEmpty()) {
+            return null;
+        }
+        if (netConfigInfos.size() == 1) {
+            return netConfigInfos.get(0);
+        }
         int pos = (int) index.longValue();
         // 考虑并发其实影响也不大
         if (pos > Integer.MAX_VALUE - 10) {

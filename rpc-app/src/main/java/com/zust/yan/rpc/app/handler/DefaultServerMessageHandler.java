@@ -15,6 +15,7 @@ import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
+import java.util.function.Consumer;
 
 /**
  * @author yan
@@ -53,11 +54,20 @@ public class DefaultServerMessageHandler extends ServerMessageHandler {
     }
 
     public static void addHandler(Object object) {
+        if (object == null) {
+            return;
+        }
         // 放入所有接口
         for (Type t : object.getClass().getGenericInterfaces()) {
-            System.out.println(t.getTypeName());
             objectMap.put(t.getTypeName(), object);
         }
+    }
+
+    public static void addHandlers(Map<String, Object> map) {
+        if (map == null || map.isEmpty()) {
+            return;
+        }
+        map.forEach((key, value) -> addHandler(value));
     }
 
     private void beforeHandle(Long requestId) {

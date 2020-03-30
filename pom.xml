@@ -15,6 +15,7 @@
         <module>rpc-common</module>
         <module>rpc-register</module>
         <module>rpc-spring</module>
+        <module>rpc-spring-demon</module>
     </modules>
     <properties>
         <netty-all.version>4.1.42.Final</netty-all.version>
