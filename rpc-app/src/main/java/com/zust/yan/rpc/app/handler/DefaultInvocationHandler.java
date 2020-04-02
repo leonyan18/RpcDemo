@@ -1,6 +1,7 @@
 package com.zust.yan.rpc.app.handler;
 
 import com.zust.yan.rpc.app.base.RpcPathUtils;
+import com.zust.yan.rpc.app.manage.ClientManager;
 import com.zust.yan.rpc.common.base.NetConfigInfo;
 import com.zust.yan.rpc.common.utils.RpcUtils;
 import com.zust.yan.rpc.net.base.*;
@@ -34,10 +35,13 @@ public class DefaultInvocationHandler implements InvocationHandler {
         }
         RequestMethodInfo methodInfo = new RequestMethodInfo(method, args);
         Request request = new Request(methodInfo);
+        request.setToAddress(client.getInfo().getHost() + ":" + client.getInfo().getPort());
         beforeSend(request);
         DefaultFuture defaultFuture = client.send(request);
         Response response = defaultFuture.getResBlock();
         afterSend(request, response);
+        log.info(request.toString());
+        log.info(response.toString());
         return response.getData();
     }
 
@@ -52,12 +56,12 @@ public class DefaultInvocationHandler implements InvocationHandler {
     private void createClient(String clazz) throws InterruptedException {
         log.info("createClient");
         // 如果获取不到自己获取，初始化顺序可能不一样所以放到这里来懒加载，用的时候在去获取信息
-//        System.out.println(clazz);
         if (netConfigInfo == null) {
             netConfigInfo = RpcUtils.getProviderNetInfo(clazz);
         }
         client = new Client(netConfigInfo);
         client.start();
+        ClientManager.addClient(client);
     }
 
     private void beforeSend(Request request) {
@@ -70,6 +74,7 @@ public class DefaultInvocationHandler implements InvocationHandler {
         request.setHandleStartTime(response.getHandleStartTime());
         request.setHandleEndTime(response.getHandleEndTime());
         request.setToRequestId(response.getToRequestId());
+        request.setFromAddress(response.getFromAddress());
         MonitorClientUtils.sendToMonitor(request);
         if (!isHot) {
             client.close();

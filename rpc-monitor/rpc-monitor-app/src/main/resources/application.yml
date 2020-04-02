@@ -8,6 +8,9 @@ spring:
 mybatis:
   mapper-locations: classpath:mapping/*Mapper.xml
   type-aliases-package: com.zust.yan.rpc.monitor.app.entity
+rpc:
+  monitor:
+    port: 8886
 
 #showSql
 logging:

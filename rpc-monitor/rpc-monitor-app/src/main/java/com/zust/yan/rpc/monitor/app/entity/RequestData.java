@@ -18,4 +18,6 @@ public class RequestData {
     private String clazz;
     private String method;
     private String parameters;
+    private String fromAddress;
+    private String toAddress;
 }

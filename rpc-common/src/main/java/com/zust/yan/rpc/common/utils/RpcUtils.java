@@ -22,6 +22,7 @@ import java.util.concurrent.Executor;
 public class RpcUtils {
     private static ThreadPoolInfo threadPoolInfo = new ThreadPoolInfo();
     private static LoadStrategy loadStrategy = new LoadStrategy();
+    private static int localPort = 8886;
 
 
     public static int getMachineCode() {
@@ -70,7 +71,7 @@ public class RpcUtils {
     public static NetConfigInfo getLocalServerNetInfo() {
         return NetConfigInfo.builder()
                 .host("127.0.0.1")
-                .port(8888)
+                .port(localPort)
                 .build();
     }
 
@@ -89,6 +90,7 @@ public class RpcUtils {
         try {
             inputStreamReader = new InputStreamReader(in, StandardCharsets.UTF_8);
             props.load(inputStreamReader);
+            localPort = Integer.valueOf(props.getProperty("rpc.local.server.port"));
             PropertiesKeyHandler.handleLoadStrategyProperties(props, loadStrategy);
         } catch (IOException e) {
             e.printStackTrace();

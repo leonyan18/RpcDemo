@@ -11,4 +11,6 @@ public interface RequestDataMapper {
      * @return 返回列表
      */
     List<RequestData> pagingRequestData(Map<String,Object> query);
+
+    void insertRequestData(RequestData requestData);
 }

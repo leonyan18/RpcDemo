@@ -9,7 +9,6 @@ public class RpcPathUtils {
 
     public static void beforeHandle(Long requestId) {
         // 上一次请求id
-        System.out.println(Thread.currentThread().getName());
         // 初始化
         if (firstRequestId.get() == null) {
             firstRequestId.set(requestId);

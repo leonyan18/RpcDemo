@@ -8,8 +8,7 @@ import io.netty.channel.SimpleChannelInboundHandler;
 
 public class MonitorHandler extends SimpleChannelInboundHandler<Object> {
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception {
-        System.out.println(msg);
+    protected void channelRead0(ChannelHandlerContext ctx, Object msg) {
         Request request = (Request) msg;
         ctx.writeAndFlush(new Response(request.getRequestId(), "test"));
     }

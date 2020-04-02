@@ -15,7 +15,6 @@ import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Type;
 import java.util.Map;
-import java.util.concurrent.Executor;
 
 /**
  * @author yan
@@ -23,7 +22,7 @@ import java.util.concurrent.Executor;
 @Component
 @Slf4j
 public class ServiceExportListener implements ApplicationListener<ContextRefreshedEvent> {
-    Executor executor = RpcUtils.getExecutor("ServiceExport");
+    private Server server;
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
@@ -33,8 +32,8 @@ public class ServiceExportListener implements ApplicationListener<ContextRefresh
         Map<String, Object> objectMap = applicationContext.getBeansWithAnnotation(RpcServiceProvider.class);
         DefaultServerMessageHandler.addHandlers(objectMap);
         NetConfigInfo netConfigInfo = RpcUtils.getLocalServerNetInfo();
-        Server server = new Server(netConfigInfo, DefaultServerMessageHandler::new);
-        executor.execute(() -> server.start());
+        server = new Server(netConfigInfo, DefaultServerMessageHandler::new);
+        server.start();
         RegisterService registerService = RegisterServiceFactory.getRegisterService();
         // 注册服务
         objectMap.forEach((key, value) -> {
@@ -48,5 +47,9 @@ public class ServiceExportListener implements ApplicationListener<ContextRefresh
         // 同步服务
         registerService.sync(true);
         log.info("ServiceExportListener end");
+    }
+
+    public void close(){
+        server.close();
     }
 }

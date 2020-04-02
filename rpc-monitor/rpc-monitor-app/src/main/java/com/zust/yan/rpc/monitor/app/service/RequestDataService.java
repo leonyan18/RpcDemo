@@ -11,4 +11,6 @@ import java.util.Map;
  */
 public interface RequestDataService {
     List<RequestDataDTO> pagingRequestData(int pageNo, int pageSize);
+
+    void insertRequestData(RequestDataDTO requestData);
 }

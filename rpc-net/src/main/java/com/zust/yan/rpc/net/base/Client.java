@@ -18,7 +18,6 @@ public class Client {
     private NetConfigInfo info;
     private static final int CLOSED=-1;
     private static final int OPEND=1;
-    private static final int INITAL=1;
     private Integer state=0;
     private ChannelFuture future;
     private EventLoopGroup group;
@@ -58,13 +57,13 @@ public class Client {
                     }
                 });
         future = b.connect().sync();
-        state=1;
+        state=OPEND;
     }
 
     public void close() throws InterruptedException {
         future.channel().close();
         group.shutdownGracefully().sync();
-        state=-1;
+        state=CLOSED;
     }
 
     public DefaultFuture send(Request request){

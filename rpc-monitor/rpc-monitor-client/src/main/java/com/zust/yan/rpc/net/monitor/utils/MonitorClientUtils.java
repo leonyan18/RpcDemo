@@ -6,8 +6,6 @@ import com.zust.yan.rpc.net.base.Client;
 import com.zust.yan.rpc.net.base.Request;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.LongAdder;
@@ -50,6 +48,18 @@ public class MonitorClientUtils {
                 }
             }
             log.info("sendToMonitor :endTime" + System.currentTimeMillis());
+        }
+    }
+
+    public static void closeAll() throws InterruptedException {
+        for (Client c:clientMap.values()) {
+            if(c==null){
+                continue;
+            }
+            if(c.isClosed()){
+                continue;
+            }
+            c.close();
         }
     }
 }

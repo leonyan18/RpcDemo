@@ -27,7 +27,6 @@ public class DefaultFuture {
     }
 
     public static void handleMsg(Response response) {
-//        System.out.println(response);
         DefaultFuture defaultFuture = FUTURES.get(response.getRequestId());
         defaultFuture.setRes(response);
         defaultFuture.wakeUpBlock();

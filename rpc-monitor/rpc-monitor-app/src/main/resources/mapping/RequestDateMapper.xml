@@ -11,10 +11,20 @@
         <result column="clazz" jdbcType="VARCHAR" property="clazz"/>
         <result column="method" jdbcType="VARCHAR" property="method"/>
         <result column="parameters" jdbcType="VARCHAR" property="parameters"/>
+        <result column="from_address" jdbcType="VARCHAR" property="fromAddress"/>
+        <result column="to_address" jdbcType="VARCHAR" property="toAddress"/>
     </resultMap>
+    <insert id="insertRequestData">
+        insert into request
+        VALUES (#{requestId}, #{clazz}, #{method}, #{requestTime},
+                #{receiveTime}, #{handleStartTime}, #{handleEndTime},
+                #{toRequestId}, #{parameters}, #{fromAddress}, #{toAddress})
+    </insert>
 
     <select id="pagingRequestData" resultMap="BaseResultMap">
-        select * from request limit #{pos} , #{pageSize}
+        select *
+        from request
+        limit #{pos} , #{pageSize}
     </select>
 
 </mapper>

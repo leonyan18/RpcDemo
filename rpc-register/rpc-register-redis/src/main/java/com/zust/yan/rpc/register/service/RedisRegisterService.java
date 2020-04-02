@@ -53,8 +53,6 @@ public class RedisRegisterService implements RegisterService {
         Map<String, List<NetConfigInfo>> allServiceNetInfos = getAllServiceNetInfo();
         for (String s : allServiceNetInfos.keySet()) {
             for (NetConfigInfo netConfigInfo : allServiceNetInfos.get(s)) {
-                System.out.println(s);
-                System.out.println(netConfigInfo);
                 RpcUtils.addProviderNetInfo(s, netConfigInfo);
             }
         }

@@ -1,28 +1,39 @@
 package com.zust.yan.rpc.net.base;
 
 import com.zust.yan.rpc.common.base.NetConfigInfo;
-import com.zust.yan.rpc.net.handler.*;
+import com.zust.yan.rpc.common.utils.RpcUtils;
+import com.zust.yan.rpc.net.handler.KryoDecoder;
+import com.zust.yan.rpc.net.handler.KryoEncoder;
+import com.zust.yan.rpc.net.handler.ServerHandler;
+import com.zust.yan.rpc.net.handler.ServerMessageHandlerFactory;
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.*;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.util.AttributeKey;
 
+import java.util.concurrent.Executor;
+
 public class Server {
+    private static Executor executor = RpcUtils.getExecutor("ServiceExport");
     private NetConfigInfo info;
     private EventLoopGroup bossGroup;
     private EventLoopGroup workerGroup;
     private ServerMessageHandlerFactory handler;
+
     public Server() {
     }
 
-    public Server(NetConfigInfo info,ServerMessageHandlerFactory handler) {
+    public Server(NetConfigInfo info, ServerMessageHandlerFactory handler) {
         this.info = info;
-        this.handler=handler;
+        this.handler = handler;
     }
 
-    public void start() {
+    public void startServer() {
         bossGroup = new NioEventLoopGroup(1);
         workerGroup = new NioEventLoopGroup();
         try {
@@ -48,6 +59,10 @@ public class Server {
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
         }
+    }
+
+    public void start() {
+        executor.execute(this::startServer);
     }
 
     public void close() {
