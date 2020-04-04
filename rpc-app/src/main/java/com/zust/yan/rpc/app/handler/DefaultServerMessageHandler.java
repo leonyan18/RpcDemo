@@ -42,7 +42,7 @@ public class DefaultServerMessageHandler extends ServerMessageHandler {
                 try {
                     Method method = object.getClass().getMethod(requestMethodInfo.getMethodName(), requestMethodInfo.getParameterTypes());
                     method.setAccessible(true);
-                    beforeHandle(request.getRequestId());
+                    beforeHandle(request.getRequestId(), response);
                     Object result = method.invoke(object, requestMethodInfo.getArgs());
                     response.setData(result);
                     afterHandle(response);
@@ -73,12 +73,12 @@ public class DefaultServerMessageHandler extends ServerMessageHandler {
         map.forEach((key, value) -> addHandler(value));
     }
 
-    private void beforeHandle(Long requestId) {
+    private void beforeHandle(Long requestId, Response response) {
         // 上一次请求id
-        RpcPathUtils.beforeHandle(requestId);
+        response.setFromRequestId(RpcPathUtils.beforeHandle(requestId));
     }
 
     private void afterHandle(Response response) {
-        response.setToRequestId(RpcPathUtils.afterHandle(response.getRequestId()));
+        RpcPathUtils.afterHandle();
     }
 }

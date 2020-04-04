@@ -13,6 +13,9 @@ public interface RequestDataMapping {
     RequestDataDTO toDTO(Request requestData);
 
     default Date toDate(Long v) {
+        if (v==null){
+            return null;
+        }
         return new Date(v);
     }
 

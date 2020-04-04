@@ -8,7 +8,7 @@ import java.util.List;
 public class Response {
     private Long requestId;
     private Object data;
-    private Long toRequestId;
+    private Long fromRequestId;
     private String fromAddress;
     private String toAddress;
     private Long requestTime;

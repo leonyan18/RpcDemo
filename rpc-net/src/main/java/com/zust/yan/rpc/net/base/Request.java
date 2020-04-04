@@ -21,7 +21,7 @@ public class Request {
     private String fromAddress;
     private String toAddress;
     private Object data;
-    private Long toRequestId;
+    private Long fromRequestId;
     private Long requestTime;
     private Long receiveTime;
     private Long handleEndTime;

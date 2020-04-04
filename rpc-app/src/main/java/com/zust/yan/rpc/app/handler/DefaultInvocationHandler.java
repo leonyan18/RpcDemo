@@ -65,16 +65,18 @@ public class DefaultInvocationHandler implements InvocationHandler {
     }
 
     private void beforeSend(Request request) {
-        RpcPathUtils.beforeHandle(request.getRequestId());
+        // 设置前一次请求id
+        request.setFromRequestId(RpcPathUtils.beforeHandle(request.getRequestId()));
         request.setRequestTime(System.currentTimeMillis());
+        MonitorClientUtils.sendToMonitor(request);
     }
 
     private void afterSend(Request request, Response response) throws InterruptedException {
         request.setReceiveTime((System.currentTimeMillis()));
         request.setHandleStartTime(response.getHandleStartTime());
         request.setHandleEndTime(response.getHandleEndTime());
-        request.setToRequestId(response.getToRequestId());
         request.setFromAddress(response.getFromAddress());
+        RpcPathUtils.afterHandle();
         MonitorClientUtils.sendToMonitor(request);
         if (!isHot) {
             client.close();

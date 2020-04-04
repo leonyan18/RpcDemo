@@ -10,7 +10,7 @@ import java.util.Date;
 @Data
 public class RequestData {
     private Long requestId;
-    private Long toRequestId;
+    private Long fromRequestId;
     private Date requestTime;
     private Date receiveTime;
     private Date handleEndTime;
@@ -20,4 +20,6 @@ public class RequestData {
     private String parameters;
     private String fromAddress;
     private String toAddress;
+    private Date createTime;
+    private Date updateTime;
 }

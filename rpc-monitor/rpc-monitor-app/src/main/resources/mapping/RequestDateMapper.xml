@@ -3,7 +3,7 @@
 <mapper namespace="com.zust.yan.rpc.monitor.app.mapper.RequestDataMapper">
     <resultMap id="BaseResultMap" type="com.zust.yan.rpc.monitor.app.entity.RequestData">
         <result column="id" jdbcType="INTEGER" property="requestId"/>
-        <result column="to_request_id" jdbcType="INTEGER" property="toRequestId"/>
+        <result column="from_request_id" jdbcType="INTEGER" property="fromRequestId"/>
         <result column="request_time" jdbcType="TIMESTAMP" property="requestTime"/>
         <result column="receive_time" jdbcType="TIMESTAMP" property="receiveTime"/>
         <result column="handle_end_time" jdbcType="TIMESTAMP" property="handleEndTime"/>
@@ -13,18 +13,120 @@
         <result column="parameters" jdbcType="VARCHAR" property="parameters"/>
         <result column="from_address" jdbcType="VARCHAR" property="fromAddress"/>
         <result column="to_address" jdbcType="VARCHAR" property="toAddress"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
     </resultMap>
+    <sql id="query">
+        <if test="clazz!=null">
+            clazz like #{clazz}
+        </if>
+        <if test="requestId!=null">
+            AND id=#{requestId}
+        </if>
+        <if test="toAddress!=null">
+            AND to_address like #{toAddress}
+        </if>
+        <if test="fromAddress !=null">
+            AND from_address like #{fromAddress}
+        </if>
+        <if test="startDate!=null and endDate!=null">
+            AND request_time between #{startDate} and #{endDate}
+        </if>
+        <if test="method!=null">
+            AND method like #{method}
+        </if>
+    </sql>
+
+    <sql id="orderSql">
+        <choose>
+            <when test="call != null">
+                order by averageNetTime desc
+            </when>
+            <when test="spend != null">
+                order by callTime desc
+            </when>
+            <otherwise>
+                order by callTime desc
+            </otherwise>
+        </choose>
+    </sql>
     <insert id="insertRequestData">
         insert into request
         VALUES (#{requestId}, #{clazz}, #{method}, #{requestTime},
                 #{receiveTime}, #{handleStartTime}, #{handleEndTime},
-                #{toRequestId}, #{parameters}, #{fromAddress}, #{toAddress})
+                #{fromRequestId}, #{parameters}, #{fromAddress}, #{toAddress}, now(), now())
     </insert>
+    <update id="updateRequestData">
+        update request
+        <set>
+            <if test="fromRequestId != null">from_request_id=#{fromRequestId},</if>
+            <if test="requestTime != null">request_time=#{requestTime},</if>
+            <if test="receiveTime != null">receive_time=#{receiveTime},</if>
+            <if test="handleEndTime != null">handle_end_time=#{handleEndTime},</if>
+            <if test="handleStartTime != null">handle_start_time=#{handleStartTime},</if>
+            <if test="clazz != null">clazz=#{clazz},</if>
+            <if test="method != null">method=#{method},</if>
+            <if test="parameters != null">parameters=#{parameters},</if>
+            <if test="fromAddress != null">from_address=#{fromAddress},</if>
+            <if test="toAddress != null">to_address=#{toAddress},</if>
+            update_time= now()
+        </set>
+        where id=#{requestId}
+    </update>
 
     <select id="pagingRequestData" resultMap="BaseResultMap">
         select *
         from request
+        <where>
+            <include refid="query"/>
+        </where>
         limit #{pos} , #{pageSize}
     </select>
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from request
+        <where>
+            <include refid="query"/>
+        </where>
+    </select>
+    <select id="getTopIp" resultType="com.zust.yan.rpc.monitor.app.dto.RpcData">
+        select to_address ip,
+        count(1) callTime,
+        (avg(receive_time) - avg(request_time)) * 1000 averageNetTime,
+        (avg(handle_end_time) - avg(handle_start_time)) * 1000 averageHandleTime
+        from request
+        where receive_time >= request_time
+        and handle_end_time >= handle_start_time
+        and request_time >= DATE_SUB(now(), INTERVAL 6 DAY)
+        group by to_address
+        <include refid="orderSql"/>
+        limit 10;
+    </select>
+
+    <select id="getTopMethod" resultType="com.zust.yan.rpc.monitor.app.dto.RpcData">
+        select clazz,
+        method,
+        count(1) callTime,
+        (avg(receive_time) - avg(request_time)) * 1000 averageNetTime,
+        (avg(handle_end_time) - avg(handle_start_time)) * 1000 averageHandleTime
+        from request
+        where receive_time >= request_time
+        and handle_end_time >= handle_start_time
+        and request_time >= DATE_SUB(now(), INTERVAL 6 DAY)
+        group by clazz, method
+        <include refid="orderSql"/>
+        limit 10;
+    </select>
+    <select id="getRequestData" resultMap="BaseResultMap">
+        select *
+        from request
+        where id = #{id}
+    </select>
+    <select id="getRequestDataFromId" resultMap="BaseResultMap">
+        select *
+        from request
+        where from_request_id = #{id}
+    </select>
+
 
 </mapper>

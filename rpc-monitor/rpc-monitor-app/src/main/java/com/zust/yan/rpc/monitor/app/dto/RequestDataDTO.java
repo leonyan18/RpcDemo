@@ -9,7 +9,7 @@ import java.util.Date;
 @Data
 public class RequestDataDTO {
     private Long requestId;
-    private Long toRequestId;
+    private Long fromRequestId;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date requestTime;
