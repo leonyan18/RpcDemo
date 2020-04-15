@@ -7,6 +7,6 @@ import org.springframework.stereotype.Component;
 @RpcServiceProvider
 public class NormalImpl implements Normal {
     public String doSad(String word) {
-        return "pkkkkk";
+        return word;
     }
 }

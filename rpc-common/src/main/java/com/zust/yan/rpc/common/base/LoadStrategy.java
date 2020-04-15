@@ -5,6 +5,7 @@ import com.zust.yan.rpc.common.chooser.ChooserFactory;
 import lombok.Data;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -60,5 +61,11 @@ public class LoadStrategy {
 
     public void clearServiceNetInfo() {
         providerNetInfoMap.clear();
+    }
+
+    public void removeServiceNetInfo(String clazz, String address) {
+        List<NetConfigInfo> netConfigInfoList = providerNetInfoMap.get(clazz);
+        //使用迭代器的删除方法删除
+        netConfigInfoList.removeIf(netConfigInfo -> address.equals(netConfigInfo.getNetAddress()));
     }
 }

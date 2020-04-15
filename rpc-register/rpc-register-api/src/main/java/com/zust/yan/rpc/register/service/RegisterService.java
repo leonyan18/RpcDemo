@@ -10,6 +10,8 @@ public interface RegisterService {
 
     Map<String, List<NetConfigInfo>> getAllServiceNetInfo();
 
+    Map<String, List<NetConfigInfo>> getNeededServiceNetInfo();
+
     void registerService(String host, int port, String clazz);
 
     void removeResistedService(String host, int port, String clazz);

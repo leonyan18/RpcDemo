@@ -19,13 +19,24 @@ public class DefaultInvocationHandler implements InvocationHandler {
     private NetConfigInfo netConfigInfo;
     private Client client;
     private Boolean isHot;
+    private String targetClazzName;
 
     public DefaultInvocationHandler() {
         isHot = true;
     }
 
+    public DefaultInvocationHandler(String clazzName) {
+        isHot = true;
+        targetClazzName = clazzName;
+    }
+
     public DefaultInvocationHandler(Boolean isHot) {
         this.isHot = isHot;
+    }
+
+    public DefaultInvocationHandler(String clazzName, Boolean isHot) {
+        this.isHot = isHot;
+        targetClazzName = clazzName;
     }
 
     @Override

@@ -1,10 +1,9 @@
 package com.zust.yan.rpc.app;
 
-import com.zust.yan.rpc.app.handler.DefaultInvocationHandler;
 import com.zust.yan.rpc.app.factory.BeanProxyFactory;
 import com.zust.yan.rpc.common.base.NetConfigInfo;
 import com.zust.yan.rpc.common.utils.RpcUtils;
-import com.zust.yan.rpc.register.service.RedisRegisterService;
+import com.zust.yan.rpc.register.service.RedisRegisterServiceImpl;
 import com.zust.yan.rpc.register.service.RegisterService;
 
 public class TestClientProxy {
@@ -15,7 +14,7 @@ public class TestClientProxy {
                 .build();
         RpcUtils.addMonitorInfo(monitorInfo);
         Sad sad = BeanProxyFactory.createProxy(Sad.class);
-        RegisterService registerService = new RedisRegisterService();
+        RegisterService registerService = new RedisRegisterServiceImpl();
         registerService.sync(true);
         System.out.println(sad.sad("sd"));
         System.out.println(sad.sad("sd"));

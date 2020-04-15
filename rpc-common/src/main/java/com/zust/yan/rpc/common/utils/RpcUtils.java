@@ -97,6 +97,10 @@ public class RpcUtils {
         }
     }
 
+    public static void removeServiceNetInfo(String clazz, String address) {
+        loadStrategy.removeServiceNetInfo(clazz, address);
+    }
+
     public static void main(String[] args) {
         RpcUtils.init();
     }

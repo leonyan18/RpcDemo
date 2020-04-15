@@ -28,4 +28,8 @@ public class NetConfigInfo {
     public int hashCode() {
         return Objects.hash(getHost(), getPort());
     }
+
+    public String getNetAddress() {
+        return host + ":" + port;
+    }
 }

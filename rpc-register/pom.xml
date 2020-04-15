@@ -14,6 +14,7 @@
     <modules>
         <module>rpc-register-redis</module>
         <module>rpc-register-api</module>
+        <module>rpc-register-zookeeper</module>
     </modules>
 
 

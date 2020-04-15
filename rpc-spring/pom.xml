@@ -42,6 +42,12 @@
         </dependency>
         <dependency>
             <groupId>com.zust.yan</groupId>
+            <artifactId>rpc-register-zookeeper</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.zust.yan</groupId>
             <artifactId>rpc-app</artifactId>
             <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>

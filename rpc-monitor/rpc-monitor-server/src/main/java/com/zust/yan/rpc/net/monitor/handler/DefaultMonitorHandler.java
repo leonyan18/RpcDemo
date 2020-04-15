@@ -1,5 +1,6 @@
 package com.zust.yan.rpc.net.monitor.handler;
 
+import com.zust.yan.rpc.common.utils.RpcUtils;
 import com.zust.yan.rpc.net.base.Request;
 import com.zust.yan.rpc.net.base.RequestMethodInfo;
 import io.netty.channel.ChannelHandlerContext;
@@ -26,6 +27,7 @@ public class DefaultMonitorHandler extends SimpleChannelInboundHandler<Object> {
             // 避免阻塞io线程
             if (object instanceof RequestMethodInfo) {
                 try {
+                    log.info("put msg to queue");
                     blockingQueue.put((Request) msg);
                 } catch (InterruptedException e) {
                     log.error("blockingQueue put error msg=" + msg);

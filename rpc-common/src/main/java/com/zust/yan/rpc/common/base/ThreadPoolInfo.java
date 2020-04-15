@@ -13,9 +13,9 @@ import java.util.concurrent.TimeUnit;
  */
 @Data
 public class ThreadPoolInfo {
-    private int coreSize = 10;
-    private int maxSize = 20;
-    private int queueLength = 5;
+    private int coreSize = 20;
+    private int maxSize = 30;
+    private int queueLength = 200;
     private int keepAliveTime = 2000;
 
     public ThreadPoolInfo() {

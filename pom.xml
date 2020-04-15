@@ -29,6 +29,7 @@
         <logback.version>1.2.3</logback.version>
         <commons.lang.version>2.6</commons.lang.version>
         <fastjson.version>1.2.50</fastjson.version>
+        <curator.version>4.0.0</curator.version>
     </properties>
 
 </project>

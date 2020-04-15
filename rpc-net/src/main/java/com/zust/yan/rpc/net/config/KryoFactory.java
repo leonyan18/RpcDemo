@@ -3,6 +3,8 @@ package com.zust.yan.rpc.net.config;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.serializers.DefaultSerializers;
 import com.zust.yan.rpc.net.base.Request;
+import com.zust.yan.rpc.net.base.RequestMethodInfo;
+import com.zust.yan.rpc.net.base.Response;
 import de.javakaffee.kryoserializers.*;
 
 import java.lang.reflect.InvocationHandler;
@@ -64,6 +66,8 @@ protected Kryo createKryo() {
   kryo.register(float[].class);
   kryo.register(double[].class);
   kryo.register(Request.class);
+  kryo.register(Response.class);
+  kryo.register(RequestMethodInfo.class);
   return kryo;
 }
 

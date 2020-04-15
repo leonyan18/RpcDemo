@@ -22,3 +22,5 @@ logging:
             monitor:
               app:
                 mapper: debug
+server:
+  port: 8081

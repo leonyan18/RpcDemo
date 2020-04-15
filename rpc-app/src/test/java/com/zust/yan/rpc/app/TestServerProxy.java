@@ -5,7 +5,7 @@ import com.zust.yan.rpc.app.handler.DefaultServerMessageHandler;
 import com.zust.yan.rpc.common.base.NetConfigInfo;
 import com.zust.yan.rpc.common.utils.RpcUtils;
 import com.zust.yan.rpc.net.base.Server;
-import com.zust.yan.rpc.register.service.RedisRegisterService;
+import com.zust.yan.rpc.register.service.RedisRegisterServiceImpl;
 import com.zust.yan.rpc.register.service.RegisterService;
 
 public class TestServerProxy {
@@ -15,7 +15,7 @@ public class TestServerProxy {
                 .port(8886)
                 .build();
         NetConfigInfo local = RpcUtils.getLocalServerNetInfo();
-        RegisterService registerService = new RedisRegisterService();
+        RegisterService registerService = new RedisRegisterServiceImpl();
         registerService.registerService(local.getHost(), local.getPort(), Happy.class.getName());
         registerService.registerService(local.getHost(), local.getPort(), Sad.class.getName());
         RpcUtils.addMonitorInfo(monitorInfo);

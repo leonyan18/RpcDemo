@@ -6,17 +6,24 @@ import com.zust.yan.rpc.register.factory.JedisSingleTonFactory;
 import redis.clients.jedis.Jedis;
 
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.stream.Collectors;
 
-public class RedisRegisterService implements RegisterService {
+/**
+ * @author yan
+ */
+public class RedisRegisterServiceImpl implements RegisterService {
     private final static String HOST = "HOST";
     private final static String PORT = "PORT";
     private final static String CLAZZ = "CLAZZ";
     private final static String PRE_FLAG = "RegisterService";
     private final static String SEP = "\n";
+    private final static CopyOnWriteArraySet<String> CLAZZ_LIST= new CopyOnWriteArraySet<>();
 
     @Override
     public List<NetConfigInfo> getServiceNetInfo(String clazz) {
         Jedis jedis = JedisSingleTonFactory.getJedis();
+        CLAZZ_LIST.add(clazz);
         return getNetConfigInfos(jedis.smembers(PRE_FLAG + clazz));
     }
 
@@ -32,8 +39,19 @@ public class RedisRegisterService implements RegisterService {
     }
 
     @Override
+    public Map<String, List<NetConfigInfo>> getNeededServiceNetInfo() {
+        Set<String> clazzs = new HashSet<>(CLAZZ_LIST);
+        Map<String, List<NetConfigInfo>> netConfigInfoMap = new HashMap<String, List<NetConfigInfo>>(30);
+        for (String clazz : clazzs) {
+            netConfigInfoMap.put(clazz, getServiceNetInfo(clazz));
+        }
+        return netConfigInfoMap;
+    }
+
+    @Override
     public void registerService(String host, int port, String clazz) {
         Jedis jedis = JedisSingleTonFactory.getJedis();
+        CLAZZ_LIST.add(clazz);
         jedis.sadd(PRE_FLAG + CLAZZ, clazz);
         jedis.sadd(PRE_FLAG + clazz, makeString(host, port));
     }
@@ -41,6 +59,7 @@ public class RedisRegisterService implements RegisterService {
     @Override
     public void removeResistedService(String host, int port, String clazz) {
         Jedis jedis = JedisSingleTonFactory.getJedis();
+        CLAZZ_LIST.remove(clazz);
         jedis.srem(PRE_FLAG + CLAZZ, clazz);
         jedis.srem(PRE_FLAG + clazz, makeString(host, port));
     }

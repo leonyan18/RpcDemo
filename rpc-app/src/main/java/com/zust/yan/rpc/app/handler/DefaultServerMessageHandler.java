@@ -13,6 +13,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.net.InetSocketAddress;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
@@ -43,6 +45,7 @@ public class DefaultServerMessageHandler extends ServerMessageHandler {
                     Method method = object.getClass().getMethod(requestMethodInfo.getMethodName(), requestMethodInfo.getParameterTypes());
                     method.setAccessible(true);
                     beforeHandle(request.getRequestId(), response);
+                    log.info("requestMethodInfo"+(Arrays.asList(requestMethodInfo.getArgs())));
                     Object result = method.invoke(object, requestMethodInfo.getArgs());
                     response.setData(result);
                     afterHandle(response);

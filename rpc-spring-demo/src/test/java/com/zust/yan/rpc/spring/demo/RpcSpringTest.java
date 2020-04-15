@@ -36,7 +36,7 @@ public class RpcSpringTest {
         System.out.println(applicationContext.getBeansWithAnnotation(RpcServiceProvider.class));
         System.out.println("+++++++++++++++++++++++");
         for (int i = 0; i < 10; i++) {
-            System.out.println(happy.happy("test"));
+            System.out.println("result=="+happy.happy("test"+i));
         }
         Thread.sleep(5000);
         listener.close();
