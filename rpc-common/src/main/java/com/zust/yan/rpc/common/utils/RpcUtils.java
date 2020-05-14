@@ -23,6 +23,9 @@ public class RpcUtils {
     private static ThreadPoolInfo threadPoolInfo = new ThreadPoolInfo();
     private static LoadStrategy loadStrategy = new LoadStrategy();
     private static int localPort = 8886;
+    public static long timeOut=5000;
+    public static long reTryTimes=3;
+    public static long failTimes=3;
 
 
     public static int getMachineCode() {

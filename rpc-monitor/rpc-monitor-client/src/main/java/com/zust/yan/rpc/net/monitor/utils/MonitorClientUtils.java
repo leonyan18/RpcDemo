@@ -6,8 +6,6 @@ import com.zust.yan.rpc.net.base.Client;
 import com.zust.yan.rpc.net.base.Request;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.LongAdder;
@@ -30,7 +28,7 @@ public class MonitorClientUtils {
                 client = clientMap.get(netConfigInfo);
             } else {
                 // 对获得的NetConfigInfo加锁避免重复创建client
-                synchronized (netConfigInfo){
+                synchronized (netConfigInfo) {
                     log.info("MonitorClient created");
                     client = new Client(netConfigInfo);
                     clientMap.put(netConfigInfo, client);
@@ -39,7 +37,7 @@ public class MonitorClientUtils {
             }
             client.send(request);
             monitorIndex.increment();
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             // 删除异常连接
             clientMap.remove(netConfigInfo);
             e.printStackTrace();
@@ -57,11 +55,11 @@ public class MonitorClientUtils {
     }
 
     public static void closeAll() throws InterruptedException {
-        for (Client c:clientMap.values()) {
-            if(c==null){
+        for (Client c : clientMap.values()) {
+            if (c == null) {
                 continue;
             }
-            if(c.isClosed()){
+            if (c.isClosed()) {
                 continue;
             }
             c.close();

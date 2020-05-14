@@ -8,8 +8,11 @@ import com.zust.yan.rpc.net.base.*;
 import com.zust.yan.rpc.net.monitor.utils.MonitorClientUtils;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.net.ssl.SSLException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author yan
@@ -41,19 +44,42 @@ public class DefaultInvocationHandler implements InvocationHandler {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        if (client == null) {
-            createClient(method.getDeclaringClass().getName());
+        Request request = null;
+        Response response = null;
+        List<Response> responses = new ArrayList<>();
+        boolean first = true;
+        int times = 0;
+        while (times < RpcUtils.reTryTimes) {
+            // 不是第一次说明超时了
+            if (client == null || !first) {
+                createClient(method.getDeclaringClass().getName(), false);
+            }
+            first = false;
+            times++;
+            RequestMethodInfo methodInfo = new RequestMethodInfo(method, args);
+            request = new Request(methodInfo);
+            request.setToAddress(client.getInfo().getHost() + ":" + client.getInfo().getPort());
+            beforeSend(request);
+            DefaultFuture defaultFuture = client.send(request);
+            response = defaultFuture.getResBlock();
+            responses.add(response);
+            if (response == null) {
+                // 超时尝试新的reponse
+                // 并检查之前的response是否成功
+                for (Response r : responses) {
+                    if (r != null) {
+                        return r.getData();
+                    }
+                }
+            } else {
+                // 没超时就直接返回
+                afterSend(request, response);
+                return response.getData();
+            }
+
         }
-        RequestMethodInfo methodInfo = new RequestMethodInfo(method, args);
-        Request request = new Request(methodInfo);
-        request.setToAddress(client.getInfo().getHost() + ":" + client.getInfo().getPort());
-        beforeSend(request);
-        DefaultFuture defaultFuture = client.send(request);
-        Response response = defaultFuture.getResBlock();
-        afterSend(request, response);
-        log.info(request.toString());
-        log.info(response.toString());
-        return response.getData();
+        // 超时并且多次不行
+        return null;
     }
 
     public NetConfigInfo getNetConfigInfo() {
@@ -64,10 +90,10 @@ public class DefaultInvocationHandler implements InvocationHandler {
         this.netConfigInfo = netConfigInfo;
     }
 
-    private void createClient(String clazz) throws InterruptedException {
+    private void createClient(String clazz, boolean reGet) throws InterruptedException {
         log.info("createClient");
         // 如果获取不到自己获取，初始化顺序可能不一样所以放到这里来懒加载，用的时候在去获取信息
-        if (netConfigInfo == null) {
+        if (netConfigInfo == null || reGet) {
             netConfigInfo = RpcUtils.getProviderNetInfo(clazz);
         }
         client = new Client(netConfigInfo);

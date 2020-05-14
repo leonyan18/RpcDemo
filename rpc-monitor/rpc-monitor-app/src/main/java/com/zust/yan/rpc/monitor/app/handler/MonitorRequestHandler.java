@@ -16,6 +16,8 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 
+import javax.net.ssl.SSLException;
+import java.security.cert.CertificateException;
 import java.util.Arrays;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -35,7 +37,7 @@ public class MonitorRequestHandler implements ApplicationListener<ContextRefresh
     RequestDataMapping requestDataMapping;
     @Value("${rpc.monitor.port}")
     private int localPort;
-    public void startListen() {
+    public void startListen() throws CertificateException, SSLException {
         NetConfigInfo.builder()
                 .host("127.0.0.1")
                 .port(localPort)
@@ -66,6 +68,12 @@ public class MonitorRequestHandler implements ApplicationListener<ContextRefresh
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
-        startListen();
+        try {
+            startListen();
+        } catch (CertificateException e) {
+            e.printStackTrace();
+        } catch (SSLException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -1,9 +1,11 @@
 package com.zust.yan.rpc.net.base;
 
+import com.zust.yan.rpc.common.utils.RpcUtils;
 import io.netty.channel.Channel;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -27,6 +29,7 @@ public class DefaultFuture {
     }
 
     public static void handleMsg(Response response) {
+        System.out.println(response);
         DefaultFuture defaultFuture = FUTURES.get(response.getRequestId());
         defaultFuture.setRes(response);
         defaultFuture.wakeUpBlock();
@@ -54,7 +57,8 @@ public class DefaultFuture {
             lock.lock();
             try {
                 if (res == null) {
-                    receive.await();
+                    receive.await(RpcUtils.timeOut, TimeUnit.MILLISECONDS);
+//                    receive.await();
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();

@@ -9,7 +9,17 @@ import io.netty.channel.SimpleChannelInboundHandler;
 public abstract class ServerMessageHandler extends SimpleChannelInboundHandler<Object> {
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception {
-        handlerMessage(msg,ctx.channel());
+        if (msg instanceof Request) {
+            Request request = (Request) msg;
+            // 判断请求类型
+            if (request.getType() != null && request.getType() == 0) {
+                ctx.channel().writeAndFlush(Response.makeHeartBeat(request.getRequestId()));
+            } else {
+                handlerMessage(msg, ctx.channel());
+            }
+        }
+
     }
+
     public abstract void handlerMessage(Object msg, Channel channel);
 }

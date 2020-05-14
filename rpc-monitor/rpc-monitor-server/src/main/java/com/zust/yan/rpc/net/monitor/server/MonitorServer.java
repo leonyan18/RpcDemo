@@ -6,6 +6,8 @@ import com.zust.yan.rpc.net.base.Server;
 import com.zust.yan.rpc.net.monitor.factory.DefaultServerMessageHandlerFactory;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.net.ssl.SSLException;
+import java.security.cert.CertificateException;
 import java.util.concurrent.BlockingQueue;
 
 /**
@@ -19,7 +21,7 @@ public class MonitorServer {
         server = new Server(info, new DefaultServerMessageHandlerFactory(queue));
     }
 
-    public void start() {
+    public void start() throws CertificateException, SSLException {
         server.start();
     }
 

@@ -7,6 +7,7 @@ import java.util.List;
 @Data
 public class Response {
     private Long requestId;
+    private Integer type;
     private Object data;
     private Long fromRequestId;
     private String fromAddress;
@@ -20,5 +21,10 @@ public class Response {
     public Response(Long requestId, Object data) {
         this.requestId = requestId;
         this.data = data;
+    }
+    public static Response makeHeartBeat(Long requestId){
+        Response response=new Response(requestId,"PONG");
+        response.setType(0);
+        return response;
     }
 }

@@ -8,8 +8,11 @@ import com.zust.yan.rpc.net.base.Server;
 import com.zust.yan.rpc.register.service.RedisRegisterServiceImpl;
 import com.zust.yan.rpc.register.service.RegisterService;
 
+import javax.net.ssl.SSLException;
+import java.security.cert.CertificateException;
+
 public class TestServerProxy {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws CertificateException, SSLException {
         NetConfigInfo monitorInfo = NetConfigInfo.builder()
                 .host("127.0.0.1")
                 .port(8886)

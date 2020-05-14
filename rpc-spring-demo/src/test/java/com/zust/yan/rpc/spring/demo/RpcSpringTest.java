@@ -32,9 +32,6 @@ public class RpcSpringTest {
     ServiceExportListener listener;
     @Test
     public void testRpcSpring() throws InterruptedException {
-        System.out.println("+++++++++++++++++++++++");
-        System.out.println(applicationContext.getBeansWithAnnotation(RpcServiceProvider.class));
-        System.out.println("+++++++++++++++++++++++");
         for (int i = 0; i < 10; i++) {
             System.out.println("result=="+happy.happy("test"+i));
         }
