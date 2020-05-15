@@ -18,10 +18,10 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public class BeanProxyFactory {
 
-    public static <T> T createProxy(Class<T> interfaceClass) {
+    public static <T> T createProxy(Class<T> interfaceClass,boolean sync) {
         // 先不创建网络地址相关的，初始化顺序不确定，先给引用
         log.info("RPC "+interfaceClass.getName()+" create success");
-        DefaultInvocationHandler defaultInvocationHandler = new DefaultInvocationHandler(interfaceClass.getName());
+        DefaultInvocationHandler defaultInvocationHandler = new DefaultInvocationHandler(interfaceClass.getName(),sync);
         return (T) Proxy.newProxyInstance(interfaceClass.getClassLoader(),
                 new Class<?>[]{interfaceClass}, defaultInvocationHandler);
     }

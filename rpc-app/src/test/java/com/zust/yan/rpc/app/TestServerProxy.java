@@ -23,7 +23,7 @@ public class TestServerProxy {
         registerService.registerService(local.getHost(), local.getPort(), Sad.class.getName());
         RpcUtils.addMonitorInfo(monitorInfo);
         DefaultServerMessageHandler.addHandler((Happy) word -> "okkkkkkkk");
-        Happy happy = BeanProxyFactory.createProxy(Happy.class);
+        Happy happy = BeanProxyFactory.createProxy(Happy.class,true);
         DefaultServerMessageHandler.addHandler((Sad) word -> happy.happy("dssd"));
         Server server = new Server(RpcUtils.getLocalServerNetInfo(), DefaultServerMessageHandler::new);
         registerService.sync(true);

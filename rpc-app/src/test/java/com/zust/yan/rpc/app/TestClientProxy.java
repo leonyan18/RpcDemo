@@ -13,7 +13,7 @@ public class TestClientProxy {
                 .port(8886)
                 .build();
         RpcUtils.addMonitorInfo(monitorInfo);
-        Sad sad = BeanProxyFactory.createProxy(Sad.class);
+        Sad sad = BeanProxyFactory.createProxy(Sad.class,true);
         RegisterService registerService = new RedisRegisterServiceImpl();
         registerService.sync(true);
         System.out.println(sad.sad("sd"));

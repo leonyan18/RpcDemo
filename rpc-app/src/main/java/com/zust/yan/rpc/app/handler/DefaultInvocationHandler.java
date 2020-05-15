@@ -8,7 +8,6 @@ import com.zust.yan.rpc.net.base.*;
 import com.zust.yan.rpc.net.monitor.utils.MonitorClientUtils;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.net.ssl.SSLException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -23,23 +22,26 @@ public class DefaultInvocationHandler implements InvocationHandler {
     private Client client;
     private Boolean isHot;
     private String targetClazzName;
+    private Boolean sync;
 
     public DefaultInvocationHandler() {
         isHot = true;
     }
 
-    public DefaultInvocationHandler(String clazzName) {
+    public DefaultInvocationHandler(String clazzName, Boolean sync) {
         isHot = true;
         targetClazzName = clazzName;
+        this.sync = sync;
     }
 
     public DefaultInvocationHandler(Boolean isHot) {
         this.isHot = isHot;
     }
 
-    public DefaultInvocationHandler(String clazzName, Boolean isHot) {
+    public DefaultInvocationHandler(String clazzName, Boolean isHot, Boolean sync) {
         this.isHot = isHot;
         targetClazzName = clazzName;
+        this.sync = sync;
     }
 
     @Override
@@ -47,36 +49,44 @@ public class DefaultInvocationHandler implements InvocationHandler {
         Request request = null;
         Response response = null;
         List<Response> responses = new ArrayList<>();
-        boolean first = true;
         int times = 0;
-        while (times < RpcUtils.reTryTimes) {
+        while (times++ < RpcUtils.reTryTimes) {
             // 不是第一次说明超时了
-            if (client == null || !first) {
+            if (client == null) {
                 createClient(method.getDeclaringClass().getName(), false);
             }
-            first = false;
-            times++;
             RequestMethodInfo methodInfo = new RequestMethodInfo(method, args);
             request = new Request(methodInfo);
             request.setToAddress(client.getInfo().getHost() + ":" + client.getInfo().getPort());
             beforeSend(request);
-            DefaultFuture defaultFuture = client.send(request);
-            response = defaultFuture.getResBlock();
-            responses.add(response);
-            if (response == null) {
-                // 超时尝试新的reponse
-                // 并检查之前的response是否成功
-                for (Response r : responses) {
-                    if (r != null) {
-                        return r.getData();
+            Request finalRequest = request;
+            DefaultFuture defaultFuture = client.send(request, (r) -> {
+                try {
+                    afterSend(finalRequest, r);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            });
+            if (sync) {
+                response = defaultFuture.getResBlockInTime();
+                responses.add(response);
+                if (response == null) {
+                    // 超时尝试新的reponse
+                    // 并检查之前的response是否成功
+                    for (Response r : responses) {
+                        if (r != null) {
+                            return r.getData();
+                        }
                     }
+                } else {
+                    // 没超时就直接返回
+                    return response.getData();
                 }
             } else {
-                // 没超时就直接返回
-                afterSend(request, response);
-                return response.getData();
+                response = defaultFuture.getRes();
+                // 异步直接返回
+                return null;
             }
-
         }
         // 超时并且多次不行
         return null;
@@ -105,7 +115,7 @@ public class DefaultInvocationHandler implements InvocationHandler {
         // 设置前一次请求id
         request.setFromRequestId(RpcPathUtils.beforeHandle(request.getRequestId()));
         request.setRequestTime(System.currentTimeMillis());
-        MonitorClientUtils.sendToMonitor(request);
+        MonitorClientUtils.sendToMonitor(new Request(request));
     }
 
     private void afterSend(Request request, Response response) throws InterruptedException {
@@ -114,7 +124,7 @@ public class DefaultInvocationHandler implements InvocationHandler {
         request.setHandleEndTime(response.getHandleEndTime());
         request.setFromAddress(response.getFromAddress());
         RpcPathUtils.afterHandle();
-        MonitorClientUtils.sendToMonitor(request);
+        MonitorClientUtils.sendToMonitor(new Request(request));
         if (!isHot) {
             client.close();
             client = null;

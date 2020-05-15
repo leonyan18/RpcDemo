@@ -16,6 +16,7 @@ public class MonitorClientUtils {
     private static Map<NetConfigInfo, Client> clientMap = new ConcurrentHashMap<>();
 
     public static void sendToMonitor(Request request) {
+        request.setType(2);
         log.info("sendToMonitor :startTime" + System.currentTimeMillis());
         NetConfigInfo netConfigInfo = RpcUtils.getMonitorInfo();
         if (netConfigInfo == null) {

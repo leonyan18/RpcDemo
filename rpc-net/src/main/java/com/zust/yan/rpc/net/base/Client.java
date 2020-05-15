@@ -101,8 +101,13 @@ public class Client {
         return new DefaultFuture(future.channel(), request);
     }
 
+    public DefaultFuture send(Request request, CallBack callBack) {
+        future.channel().writeAndFlush(request);
+        return new DefaultFuture(future.channel(), request,callBack);
+    }
+
     public void reConnect() {
-        System.out.println("reconnect " + Thread.currentThread().getName());
+        // 防止多次重连
         synchronized (info) {
             try {
                 close();

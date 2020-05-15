@@ -34,6 +34,7 @@ public class HeartbeatHandler extends ChannelInboundHandlerAdapter {
         }
     }
 
+    // todo 待优化 改成时间检查不另外创建线程
     private void doHeartBeat() {
         // client 必不为空 初始化
         synchronized (client) {
@@ -44,9 +45,8 @@ public class HeartbeatHandler extends ChannelInboundHandlerAdapter {
                 reTryTimesMap.put(client, new AtomicInteger(0));
             }
         }
-//        System.out.println("failTimes" + failTimesMap.get(client));
         DefaultFuture defaultFuture = client.send(Request.makeHeartBeat());
-        Response response = defaultFuture.getResBlock();
+        Response response = defaultFuture.getResBlockInTime();
         // 说明超时
         if (response == null) {
             if (failTimesMap.get(client).incrementAndGet() == RpcUtils.failTimes + 1) {
