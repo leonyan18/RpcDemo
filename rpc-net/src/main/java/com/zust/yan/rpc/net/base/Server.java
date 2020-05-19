@@ -9,6 +9,10 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.serialization.ClassResolvers;
+import io.netty.handler.codec.serialization.ObjectDecoder;
+import io.netty.handler.codec.serialization.ObjectEncoder;
+import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.ssl.SslHandler;
 import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.util.AttributeKey;
@@ -27,13 +31,16 @@ public class Server {
     private static final int OPENED = 1;
     private static final int NOT_INIT = 0;
     private Integer state = NOT_INIT;
+    private  ChannelFuture future;
 
     public ChannelHandler[] handlers() {
         return new ChannelHandler[]{
-                new IdleStateHandler(0, 0, 5, TimeUnit.SECONDS),
+//                new IdleStateHandler(0, 0, 50, TimeUnit.SECONDS),
                 new AcceptorIdleStateTrigger(),
-                new KryoDecoder(),
-                new KryoEncoder(),
+                new ObjectDecoder(1024 * 1024, ClassResolvers.weakCachingConcurrentResolver(this.getClass().getClassLoader())),
+                new ObjectEncoder(),
+//                new KryoDecoder(),
+//                new KryoEncoder(),
                 handler.getHandler()
         };
 
@@ -48,7 +55,7 @@ public class Server {
     }
 
     public void startServer() {
-        bossGroup = new NioEventLoopGroup(1);
+        bossGroup = new NioEventLoopGroup();
         workerGroup = new NioEventLoopGroup();
         try {
             ServerBootstrap b = new ServerBootstrap();
@@ -68,12 +75,13 @@ public class Server {
                                 engine.setEnabledCipherSuites(engine.getSupportedCipherSuites());
                                 ch.pipeline().addFirst("ssl", new SslHandler(engine, false));
                             }
+//                            ch.pipeline().addFirst(new LoggingHandler());
                             ch.pipeline().addLast(handlers());
                         }
                     });
-            ChannelFuture f = b.bind(info.getPort()).sync();
+            future = b.bind(info.getPort()).sync();
             state = OPENED;
-            f.channel().closeFuture().sync();
+            future.channel().closeFuture().sync();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {

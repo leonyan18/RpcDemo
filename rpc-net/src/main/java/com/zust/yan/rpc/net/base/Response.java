@@ -2,8 +2,13 @@ package com.zust.yan.rpc.net.base;
 
 import lombok.Data;
 
+import java.io.Serializable;
+
+/**
+ * @author yan
+ */
 @Data
-public class Response {
+public class Response implements Serializable {
     private Long requestId;
     private Integer type;
     private Object data;

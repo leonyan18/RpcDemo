@@ -7,15 +7,17 @@ import com.zust.yan.rpc.net.handler.KryoDecoder;
 import com.zust.yan.rpc.net.handler.KryoEncoder;
 import com.zust.yan.rpc.net.utils.RpcSslContextUtils;
 import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelHandler;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.EventLoopGroup;
+import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.codec.serialization.ClassResolvers;
+import io.netty.handler.codec.serialization.ObjectDecoder;
+import io.netty.handler.codec.serialization.ObjectEncoder;
+import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.ssl.SslHandler;
 import io.netty.handler.timeout.IdleStateHandler;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.net.ssl.SSLEngine;
 import java.net.InetSocketAddress;
@@ -26,6 +28,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * @author yan
  */
+@Slf4j
 public class Client {
     private static AtomicInteger BASE = new AtomicInteger();
     private Integer clientId;
@@ -35,14 +38,18 @@ public class Client {
     private static final int NOT_INIT = 0;
     private Integer state = NOT_INIT;
     private Bootstrap bootstrap;
+    private DefalutReceiveHandler defalutReceiveHandler;
 
     public ChannelHandler[] handlers() {
+        defalutReceiveHandler = new DefalutReceiveHandler();
         return new ChannelHandler[]{
-                new IdleStateHandler(0, 0, 5, TimeUnit.SECONDS),
+                new IdleStateHandler(0, 0, 50, TimeUnit.SECONDS),
                 new HeartbeatHandler(this),
-                new KryoDecoder(),
-                new KryoEncoder(),
-                new DefalutReceiveHandler()
+                new ObjectDecoder(1024 * 1024, ClassResolvers.weakCachingConcurrentResolver(this.getClass().getClassLoader())),
+                new ObjectEncoder(),
+//                new KryoDecoder(),
+//                new KryoEncoder(),
+                defalutReceiveHandler
         };
 
     }
@@ -83,6 +90,7 @@ public class Client {
                             // 客户端写true
                             ch.pipeline().addFirst("ssl", new SslHandler(engine, true));
                         }
+//                        ch.pipeline().addFirst(new LoggingHandler());
                         ch.pipeline().addLast(handlers());
                     }
                 });
@@ -91,19 +99,20 @@ public class Client {
     }
 
     public void close() throws InterruptedException {
-        future.channel().close();
+        defalutReceiveHandler.ctx.channel().close();
         group.shutdownGracefully().sync();
         state = CLOSED;
     }
 
     public DefaultFuture send(Request request) {
-        future.channel().writeAndFlush(request);
+        defalutReceiveHandler.ctx.writeAndFlush(request);
         return new DefaultFuture(future.channel(), request);
     }
 
     public DefaultFuture send(Request request, CallBack callBack) {
-        future.channel().writeAndFlush(request);
-        return new DefaultFuture(future.channel(), request,callBack);
+        DefaultFuture defaultFuture = new DefaultFuture(future.channel(), request, callBack);
+        defalutReceiveHandler.ctx.writeAndFlush(request).addListener((ChannelFutureListener) future -> log.info("Request send done request" + request));
+        return defaultFuture;
     }
 
     public void reConnect() {

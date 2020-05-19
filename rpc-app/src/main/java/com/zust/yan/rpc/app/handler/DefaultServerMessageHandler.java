@@ -7,6 +7,7 @@ import com.zust.yan.rpc.net.base.RequestMethodInfo;
 import com.zust.yan.rpc.net.base.Response;
 import com.zust.yan.rpc.net.handler.ServerMessageHandler;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandlerContext;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.InvocationTargetException;
@@ -28,11 +29,10 @@ public class DefaultServerMessageHandler extends ServerMessageHandler {
     private static Executor executor = RpcUtils.getExecutor("ServerMessageHandler");
 
     @Override
-    public void handlerMessage(Object msg, Channel channel) {
+    public void handlerMessage(Request request, ChannelHandlerContext ctx) {
         executor.execute(() -> {
-            Request request = (Request) msg;
             Response response = new Response();
-            InetSocketAddress ipSocket = (InetSocketAddress) channel.remoteAddress();
+            InetSocketAddress ipSocket = (InetSocketAddress) ctx.channel().remoteAddress();
             response.setFromAddress(ipSocket.getAddress().getHostAddress() + ":" + ipSocket.getPort());
             response.setToAddress(request.getToAddress());
             response.setRequestId(request.getRequestId());
@@ -55,7 +55,7 @@ public class DefaultServerMessageHandler extends ServerMessageHandler {
             }
             handleTime = System.currentTimeMillis();
             response.setHandleEndTime(handleTime);
-            channel.writeAndFlush(response);
+            ctx.writeAndFlush(response);
         });
     }
 

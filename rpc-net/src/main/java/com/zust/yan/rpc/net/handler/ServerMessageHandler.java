@@ -15,11 +15,16 @@ public abstract class ServerMessageHandler extends SimpleChannelInboundHandler<O
             if (request.getType() != null && request.getType() == 0) {
                 ctx.channel().writeAndFlush(Response.makeHeartBeat(request.getRequestId()));
             } else {
-                handlerMessage(msg, ctx.channel());
+                handlerMessage(request, ctx);
             }
         }
-
+        System.out.println("server read "+msg);
     }
 
-    public abstract void handlerMessage(Object msg, Channel channel);
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        cause.printStackTrace();
+    }
+
+    public abstract void handlerMessage(Request request, ChannelHandlerContext channel);
 }

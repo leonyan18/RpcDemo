@@ -48,7 +48,7 @@ public class DefaultInvocationHandler implements InvocationHandler {
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         Request request = null;
         Response response = null;
-        List<Response> responses = new ArrayList<>();
+        List<DefaultFuture> defaultFutures = new ArrayList<>();
         int times = 0;
         while (times++ < RpcUtils.reTryTimes) {
             // 不是第一次说明超时了
@@ -68,14 +68,16 @@ public class DefaultInvocationHandler implements InvocationHandler {
                 }
             });
             if (sync) {
+                log.info("do sync "+method.getName());
                 response = defaultFuture.getResBlockInTime();
-                responses.add(response);
+                defaultFutures.add(defaultFuture);
                 if (response == null) {
                     // 超时尝试新的reponse
                     // 并检查之前的response是否成功
-                    for (Response r : responses) {
-                        if (r != null) {
-                            return r.getData();
+                    for (DefaultFuture future : defaultFutures) {
+                        // 这里非阻塞
+                        if (future.getRes() != null) {
+                            return future.getRes().getData();
                         }
                     }
                 } else {
@@ -83,6 +85,7 @@ public class DefaultInvocationHandler implements InvocationHandler {
                     return response.getData();
                 }
             } else {
+                log.info("do async "+method.getName());
                 response = defaultFuture.getRes();
                 // 异步直接返回
                 return null;

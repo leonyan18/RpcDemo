@@ -41,7 +41,6 @@ public class DefaultMonitorHandler extends SimpleChannelInboundHandler<Object> {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        super.exceptionCaught(ctx, cause);
         log.error("exceptionCaught " + ctx);
         cause.printStackTrace();
     }

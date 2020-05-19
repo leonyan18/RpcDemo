@@ -11,6 +11,6 @@ public class SadServiceImpl implements Sad {
     Normal normal;
 
     public String sad(String word) {
-        return normal.doSad(word);
+        return "test";
     }
 }

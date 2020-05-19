@@ -30,6 +30,21 @@
         <commons.lang.version>2.6</commons.lang.version>
         <fastjson.version>1.2.50</fastjson.version>
         <curator.version>4.0.0</curator.version>
+        <maven.compiler.plugin>3.8.1</maven.compiler.plugin>
     </properties>
-
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${maven.compiler.plugin}</version>
+                    <configuration>
+                        <source>8</source>
+                        <target>8</target>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 </project>

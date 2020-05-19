@@ -30,10 +30,14 @@ public class MonitorClientUtils {
             } else {
                 // 对获得的NetConfigInfo加锁避免重复创建client
                 synchronized (netConfigInfo) {
-                    log.info("MonitorClient created");
-                    client = new Client(netConfigInfo);
-                    clientMap.put(netConfigInfo, client);
-                    client.start();
+                    if (clientMap.containsKey(netConfigInfo)) {
+                        client = clientMap.get(netConfigInfo);
+                    } else {
+                        log.info("MonitorClient created");
+                        client = new Client(netConfigInfo);
+                        client.start();
+                        clientMap.put(netConfigInfo, client);
+                    }
                 }
             }
             client.send(request);

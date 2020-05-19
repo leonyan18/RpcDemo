@@ -3,13 +3,14 @@ package com.zust.yan.rpc.net.base;
 import com.zust.yan.rpc.common.utils.RpcUtils;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.concurrent.atomic.LongAdder;
 
 /**
  * @author yan
  */
 @Data
-public class Request {
+public class Request implements Serializable {
     private static LongAdder adder = new LongAdder();
 
     static {

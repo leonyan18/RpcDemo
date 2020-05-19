@@ -33,9 +33,9 @@ public class DefaultFuture {
     }
 
     public static void handleMsg(Response response) {
-        if (response.getType()==1){
-            System.out.println("responseTest: "+response.getData());
-        }
+//        if (response.getType()==1){
+//            System.out.println("responseTest: "+response.getData());
+//        }
 
         DefaultFuture defaultFuture = RpcFutureUtils.getDefaultFuture(response.getRequestId());
         if (defaultFuture != null) {
@@ -96,5 +96,8 @@ public class DefaultFuture {
 
     public Response getResBlock() {
         return getResBlockInTime(0L);
+    }
+    public Request getRequest(){
+        return request;
     }
 }
