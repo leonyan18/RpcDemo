@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 
 /**
@@ -23,9 +24,9 @@ public class RpcUtils {
     private static ThreadPoolInfo threadPoolInfo = new ThreadPoolInfo();
     private static LoadStrategy loadStrategy = new LoadStrategy();
     private static int localPort = 8886;
-    public static long timeOut=5000;
-    public static long reTryTimes=3;
-    public static long failTimes=3;
+    public static long timeOut = 5000;
+    public static long reTryTimes = 3;
+    public static long failTimes = 3;
 
 
     public static int getMachineCode() {
@@ -61,6 +62,12 @@ public class RpcUtils {
 
     public static Map<String, List<NetConfigInfo>> getProviderNetInfoMap() {
         return loadStrategy.getProviderNetInfoMap();
+    }
+
+    public static void setProviderNetInfoMap(Map<String, List<NetConfigInfo>> map) {
+        // 转化成并发map
+        map = new ConcurrentHashMap<>(map);
+        loadStrategy.setProviderNetInfoMap(map);
     }
 
     public static NetConfigInfo getProviderNetInfo(String clazz) {

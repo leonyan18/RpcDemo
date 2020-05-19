@@ -5,22 +5,29 @@ import lombok.Data;
 
 import java.util.Objects;
 
+/**
+ * @author yan
+ */
 @Data
 @Builder
 public class NetConfigInfo {
-    private int configId;
+    private Integer configId;
     private String host;
-    private int port;
+    private Integer port;
     private String password;
-    private int timeOut;
-    private int retryTimes;
+    private Integer timeOut;
+    private Integer retryTimes;
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof NetConfigInfo)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof NetConfigInfo)) {
+            return false;
+        }
         NetConfigInfo that = (NetConfigInfo) o;
-        return getPort() == that.getPort() &&
+        return getPort().equals(that.getPort()) &&
                 getHost().equals(that.getHost());
     }
 

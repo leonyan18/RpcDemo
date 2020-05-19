@@ -42,7 +42,7 @@ public class RpcSpringTest {
             System.out.println("resultId==" + f.getRequest().getRequestId());
             System.out.println("resultFuture==" + f.getResBlockInTime());
         }
-        Thread.sleep(5000);
+        Thread.sleep(500000);
         listener.close();
         ClientManager.closeAll();
         MonitorClientUtils.closeAll();

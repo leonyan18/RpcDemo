@@ -11,11 +11,11 @@ public class PageInfo implements Serializable {
     private Integer pageSize;
     private Integer pageNo;
 
-    public PageInfo(int pageSize, int pageNo) {
-        if (pageSize <= 0) {
+    public PageInfo(Integer pageSize, Integer pageNo) {
+        if (pageSize == null || pageSize <= 0) {
             pageSize = 10;
         }
-        if (pageNo <= 0) {
+        if (pageNo == null || pageNo <= 0) {
             pageNo = 1;
         }
         this.pageSize = pageSize;

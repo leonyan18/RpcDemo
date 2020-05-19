@@ -31,8 +31,8 @@ public class RequestDataController {
     CallPathService callPathService;
 
     @GetMapping("")
-    public Response<Paging<RequestDataDTO>> getRequestData(@RequestParam(required = false) int pageNo,
-                                                           @RequestParam(required = false) int pageSize,
+    public Response<Paging<RequestDataDTO>> getRequestData(@RequestParam(required = false) Integer pageNo,
+                                                           @RequestParam(required = false) Integer pageSize,
                                                            @RequestParam(required = false) String clazz,
                                                            @RequestParam(required = false) String method,
                                                            @RequestParam(required = false) String fromAddress,

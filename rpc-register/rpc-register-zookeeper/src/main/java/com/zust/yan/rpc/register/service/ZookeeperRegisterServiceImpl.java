@@ -93,29 +93,27 @@ public class ZookeeperRegisterServiceImpl implements RegisterService, PathChildr
 
     @Override
     public void sync(Boolean redo) {
-        if (redo) {
-            RpcUtils.clearServiceNetInfo();
-        }
         Map<String, List<NetConfigInfo>> allServiceNetInfos = getAllServiceNetInfo();
-        for (String s : allServiceNetInfos.keySet()) {
-            for (NetConfigInfo netConfigInfo : allServiceNetInfos.get(s)) {
-                RpcUtils.addProviderNetInfo(s, netConfigInfo);
+        if (redo) {
+            RpcUtils.setProviderNetInfoMap(allServiceNetInfos);
+        } else {
+            for (String s : allServiceNetInfos.keySet()) {
+                for (NetConfigInfo netConfigInfo : allServiceNetInfos.get(s)) {
+                    RpcUtils.addProviderNetInfo(s, netConfigInfo);
+                }
             }
-        }
-        if (!redo) {
             CuratorFramework client = ZookeeperClient.getZookeeperClient();
             final PathChildrenCache childrenCache = new PathChildrenCache(client, PRE_PATH, true);
-            childrenCache.getListenable()
-                    .addListener(this, executor);
+            childrenCache.getListenable().addListener(this, executor);
         }
     }
 
     private static String getConsumersPath(String clazz) {
-        return PRE_PATH+ PATH_SEP+ clazz  + CONSUMERS;
+        return PRE_PATH + PATH_SEP + clazz + CONSUMERS;
     }
 
     private static String getConsumerPath(String clazz, String host, int port) {
-        return getConsumersPath(clazz) + PATH_SEP+ host + FIELD_SEP + port;
+        return getConsumersPath(clazz) + PATH_SEP + host + FIELD_SEP + port;
     }
 
     private static List<NetConfigInfo> toNetConfigInfos(List<String> result) {
@@ -135,7 +133,7 @@ public class ZookeeperRegisterServiceImpl implements RegisterService, PathChildr
     public void childEvent(CuratorFramework client, PathChildrenCacheEvent event) throws Exception {
         ChildData childData = event.getData();
         String[] path = childData.getPath().split(PATH_SEP);
-        log.info("zookeeperEvent"+event.getType().toString() + childData.getPath());
+        log.info("zookeeperEvent" + event.getType().toString() + childData.getPath());
         if (PathChildrenCacheEvent.Type.CHILD_ADDED.equals(event.getType())) {
             // /rpc/#{class}/consumenrs/host:port
 //            log.info();

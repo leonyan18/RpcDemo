@@ -2,8 +2,6 @@ package com.zust.yan.rpc.monitor.app.service;
 
 import com.zust.yan.rpc.monitor.app.dto.RequestDataDTO;
 import com.zust.yan.rpc.monitor.app.dto.RpcData;
-import com.zust.yan.rpc.monitor.app.dto.RpcPath;
-import com.zust.yan.rpc.monitor.app.entity.RequestData;
 import com.zust.yan.rpc.monitor.app.mapper.RequestDataMapper;
 import com.zust.yan.rpc.monitor.app.mapping.RequestDataMapping;
 import com.zust.yan.rpc.monitor.app.utils.PageInfo;
@@ -11,9 +9,10 @@ import com.zust.yan.rpc.monitor.app.utils.Paging;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -35,6 +34,9 @@ public class RequestDataServiceImpl implements RequestDataService {
             return Paging.emptyPaging();
         }
         List<RequestDataDTO> dataDTOS = requestDataMapping.toDTOs(requestDataMapper.pagingRequestData(query));
+        for (RequestDataDTO t : dataDTOS) {
+            t.makeTime();
+        }
         return new Paging<>(count, dataDTOS);
     }
 

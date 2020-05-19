@@ -7,7 +7,6 @@ import redis.clients.jedis.Jedis;
 
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArraySet;
-import java.util.stream.Collectors;
 
 /**
  * @author yan
@@ -18,7 +17,7 @@ public class RedisRegisterServiceImpl implements RegisterService {
     private final static String CLAZZ = "CLAZZ";
     private final static String PRE_FLAG = "RegisterService";
     private final static String SEP = "\n";
-    private final static CopyOnWriteArraySet<String> CLAZZ_LIST= new CopyOnWriteArraySet<>();
+    private final static CopyOnWriteArraySet<String> CLAZZ_LIST = new CopyOnWriteArraySet<>();
 
     @Override
     public List<NetConfigInfo> getServiceNetInfo(String clazz) {
@@ -70,11 +69,7 @@ public class RedisRegisterServiceImpl implements RegisterService {
             RpcUtils.clearServiceNetInfo();
         }
         Map<String, List<NetConfigInfo>> allServiceNetInfos = getAllServiceNetInfo();
-        for (String s : allServiceNetInfos.keySet()) {
-            for (NetConfigInfo netConfigInfo : allServiceNetInfos.get(s)) {
-                RpcUtils.addProviderNetInfo(s, netConfigInfo);
-            }
-        }
+        RpcUtils.setProviderNetInfoMap(allServiceNetInfos);
     }
 
     private List<NetConfigInfo> getNetConfigInfos(Set<String> netConfigInfos) {

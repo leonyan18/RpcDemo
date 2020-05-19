@@ -20,6 +20,9 @@
         <if test="clazz!=null">
             clazz like #{clazz}
         </if>
+        <if test="serviceName!=null">
+            clazz = #{serviceName}
+        </if>
         <if test="requestId!=null">
             AND id=#{requestId}
         </if>
