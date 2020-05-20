@@ -2,14 +2,16 @@ package com.zust.yan.rpc.monitor.app.service;
 
 import com.zust.yan.rpc.monitor.app.dto.Link;
 import com.zust.yan.rpc.monitor.app.dto.Node;
+import com.zust.yan.rpc.monitor.app.dto.RequestDataDTO;
 import com.zust.yan.rpc.monitor.app.dto.RpcPath;
 import com.zust.yan.rpc.monitor.app.entity.RequestData;
 import com.zust.yan.rpc.monitor.app.mapper.RequestDataMapper;
-import com.zust.yan.rpc.net.base.Request;
+import com.zust.yan.rpc.monitor.app.mapping.RequestDataMapping;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.*;
 
@@ -18,6 +20,8 @@ import java.util.*;
 public class CallPathServiceImpl implements CallPathService {
     @Autowired
     RequestDataMapper requestDataMapper;
+    @Autowired
+    RequestDataMapping requestDataMapping;
 
     @Override
     public RpcPath getCallPath(Long requestId) {
@@ -26,12 +30,14 @@ public class CallPathServiceImpl implements CallPathService {
         Set<String> set = new HashSet<>();
         List<Link> links = new ArrayList<>();
         List<Node> nodes = new ArrayList<>();
+        List<RequestDataDTO> dataDTOS = new ArrayList<>();
         Queue<LevelNode> queue = new ArrayDeque<>(200);
-        RequestData requestData=requestDataMapper.getRequestData(requestId);
-        if(requestData!=null){
+        RequestData requestData = requestDataMapper.getRequestData(requestId);
+        dataDTOS.add(requestDataMapping.toDTO(requestData));
+        if (requestData != null) {
             // 头结点初始化
-            List<Node> nodeList=new ArrayList<>(2);
-            Node node=new Node(requestData);
+            List<Node> nodeList = new ArrayList<>(2);
+            Node node = new Node(requestData);
             nodeList.add(node);
             nodes.add(node);
             permutations.add(nodeList);
@@ -50,6 +56,7 @@ public class CallPathServiceImpl implements CallPathService {
             if (levelNode.level >= permutations.size()) {
                 permutations.add(new ArrayList<>());
             }
+            dataDTOS.addAll(requestDataMapping.toDTOs(requestDataList));
             List<Node> temp = toNodeList(requestDataList);
             // 在该层添加
             permutations.get(levelNode.level).addAll(temp);
@@ -70,7 +77,7 @@ public class CallPathServiceImpl implements CallPathService {
             }
         }
         generateNodePos(permutations);
-        return new RpcPath(nodes, links);
+        return new RpcPath(nodes, links, dataDTOS);
     }
 
     private static List<Node> toNodeList(List<RequestData> requestDataList) {

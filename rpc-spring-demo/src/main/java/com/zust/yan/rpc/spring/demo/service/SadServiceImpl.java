@@ -10,7 +10,8 @@ public class SadServiceImpl implements Sad {
     @RpcServiceConsumer
     Normal normal;
 
+    @Override
     public String sad(String word) {
-        return "test";
+        return normal.doSad(word);
     }
 }

@@ -34,9 +34,8 @@ public class RequestDataServiceImpl implements RequestDataService {
             return Paging.emptyPaging();
         }
         List<RequestDataDTO> dataDTOS = requestDataMapping.toDTOs(requestDataMapper.pagingRequestData(query));
-        for (RequestDataDTO t : dataDTOS) {
-            t.makeTime();
-        }
+        // 计算时间
+        dataDTOS.forEach(RequestDataDTO::makeTime);
         return new Paging<>(count, dataDTOS);
     }
 

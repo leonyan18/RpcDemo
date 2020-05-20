@@ -100,7 +100,9 @@ public class RpcUtils {
         try {
             inputStreamReader = new InputStreamReader(in, StandardCharsets.UTF_8);
             props.load(inputStreamReader);
-            localPort = Integer.valueOf(props.getProperty("rpc.local.server.port"));
+            if (props.getProperty("rpc.local.server.port") != null) {
+                localPort = Integer.valueOf(props.getProperty("rpc.local.server.port"));
+            }
             PropertiesKeyHandler.handleLoadStrategyProperties(props, loadStrategy);
         } catch (IOException e) {
             e.printStackTrace();

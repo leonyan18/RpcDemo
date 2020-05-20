@@ -23,10 +23,10 @@ public class LoadStrategy {
             .timeOut(2000)
             .build();
     private String registerType = "redis";
-    private Map<String, Chooser> providerChooserMap = new ConcurrentHashMap<>(20);
+    private volatile Map<String, Chooser> providerChooserMap = new ConcurrentHashMap<>(20);
     private Chooser monitorChooser;
     private List<NetConfigInfo> monitorInfos = new ArrayList<>();
-    private Map<String, List<NetConfigInfo>> providerNetInfoMap = new ConcurrentHashMap<>(20);
+    private volatile Map<String, List<NetConfigInfo>> providerNetInfoMap = new ConcurrentHashMap<>(20);
 
     public NetConfigInfo getMonitorInfo() {
         if (monitorChooser == null) {
