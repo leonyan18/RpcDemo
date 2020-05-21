@@ -19,24 +19,34 @@ public class DefaultFuture {
     private Lock lock = new ReentrantLock();
     private Condition receive = lock.newCondition();
 
+    public DefaultFuture() {
+
+    }
+
+    public static DefaultFuture getClosedDefaultFuture(Request request) {
+        DefaultFuture defaultFuture = new DefaultFuture();
+        defaultFuture.request = request;
+        defaultFuture.res = new Response(request.getRequestId(), null);
+        return defaultFuture;
+    }
+
     public DefaultFuture(Channel channel, Request request) {
         this.request = request;
-        RpcFutureUtils.putDefaultFuture(request.getRequestId(), this,request.isNormal());
+        RpcFutureUtils.putDefaultFuture(request.getRequestId(), this, request.isNormal());
         RpcFutureUtils.putChannel(request.getRequestId(), channel);
     }
 
     public DefaultFuture(Channel channel, Request request, CallBack callBack) {
         this.request = request;
-        RpcFutureUtils.putDefaultFuture(request.getRequestId(), this,request.isNormal());
+        RpcFutureUtils.putDefaultFuture(request.getRequestId(), this, request.isNormal());
         RpcFutureUtils.putChannel(request.getRequestId(), channel);
-        RpcFutureUtils.putCallBack(request.getRequestId(), callBack);
+        if (callBack != null) {
+            RpcFutureUtils.putCallBack(request.getRequestId(), callBack);
+        }
+
     }
 
     public static void handleMsg(Response response) {
-//        if (response.getType()==1){
-//            System.out.println("responseTest: "+response.getData());
-//        }
-
         DefaultFuture defaultFuture = RpcFutureUtils.getDefaultFuture(response.getRequestId());
         if (defaultFuture != null) {
             CallBack callBack = RpcFutureUtils.getCallBack(response.getRequestId());
@@ -97,7 +107,8 @@ public class DefaultFuture {
     public Response getResBlock() {
         return getResBlockInTime(0L);
     }
-    public Request getRequest(){
+
+    public Request getRequest() {
         return request;
     }
 }

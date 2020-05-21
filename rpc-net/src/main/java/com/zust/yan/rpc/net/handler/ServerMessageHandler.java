@@ -18,7 +18,6 @@ public abstract class ServerMessageHandler extends SimpleChannelInboundHandler<O
                 handlerMessage(request, ctx);
             }
         }
-        System.out.println("server read "+msg);
     }
 
     @Override

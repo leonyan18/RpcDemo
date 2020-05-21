@@ -20,9 +20,9 @@ public class RpcPathUtils {
             last = stack.peek();
         }
         stack.add(requestId);
-        log.info("beforeHandle stack =" + stack);
-        log.info("beforeHandle last =" + last);
-        log.info("beforeHandle stack.size =" + stack.size());
+//        log.info("beforeHandle stack =" + stack);
+//        log.info("beforeHandle last =" + last);
+//        log.info("beforeHandle stack.size =" + stack.size());
         return last;
     }
 
@@ -30,8 +30,8 @@ public class RpcPathUtils {
         Stack<Long> stack = requestStack.get();
         if (stack != null && !stack.empty()) {
             stack.pop();
-            log.info("beforeHandle stack =" + stack);
-            log.info("afterHandle stack.size =" + stack.size());
+//            log.info("beforeHandle stack =" + stack);
+//            log.info("afterHandle stack.size =" + stack.size());
         }
     }
 }

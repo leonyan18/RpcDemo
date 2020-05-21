@@ -12,17 +12,14 @@ import java.util.concurrent.atomic.LongAdder;
 @Data
 public class Request implements Serializable {
     private static LongAdder adder = new LongAdder();
-
-    static {
-        // 初始化为当前时间戳
-        adder.add(System.currentTimeMillis());
-    }
-
     /**
      * 1 普通
      * 0 心跳
      * 2 监控
      */
+    public static final int HEARTBEAT_TYPE = 0;
+    public static final int NORMAL_TYPE = 1;
+    public static final int MONITOR_TYPE = 2;
     private Integer type;
     private Long requestId;
     private Long seq;
@@ -35,9 +32,14 @@ public class Request implements Serializable {
     private Long handleEndTime;
     private Long handleStartTime;
 
+    static {
+        // 初始化为当前时间戳
+        adder.add(System.currentTimeMillis());
+    }
+
     // todo 雪花算法优化
     public Request() {
-        type = 1;
+        type = NORMAL_TYPE;
         adder.increment();
         seq = adder.longValue();
         requestId = adder.longValue() * 100000 + RpcUtils.getMachineCode();
@@ -45,7 +47,7 @@ public class Request implements Serializable {
 
     public Request(Object data) {
         this.data = data;
-        type = 1;
+        type = NORMAL_TYPE;
         adder.increment();
         seq = adder.longValue();
         requestId = adder.longValue() * 100000 + RpcUtils.getMachineCode();
@@ -53,17 +55,17 @@ public class Request implements Serializable {
 
     public static Request makeHeartBeat() {
         Request request = new Request();
-        request.setType(0);
+        request.setType(HEARTBEAT_TYPE);
         request.setData("PING");
         return request;
     }
 
     public Boolean isHeartBeat() {
-        return type == 0;
+        return type == HEARTBEAT_TYPE;
     }
 
     public Boolean isNormal() {
-        return type == 1;
+        return type == NORMAL_TYPE;
     }
 
 
@@ -80,5 +82,4 @@ public class Request implements Serializable {
         this.handleEndTime = request.getHandleEndTime();
         this.handleStartTime = request.getHandleStartTime();
     }
-
 }

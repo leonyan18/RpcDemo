@@ -51,28 +51,32 @@ public class DefaultInvocationHandler implements InvocationHandler {
         List<DefaultFuture> defaultFutures = new ArrayList<>();
         int times = 0;
         while (times++ < RpcUtils.reTryTimes) {
-            // 不是第一次说明超时了
             if (client == null) {
                 createClient(method.getDeclaringClass().getName(), false);
+            }
+            // 说明有出现超时的情况
+            if (times>1){
+                createClient(method.getDeclaringClass().getName(), true);
             }
             RequestMethodInfo methodInfo = new RequestMethodInfo(method, args);
             request = new Request(methodInfo);
             request.setToAddress(client.getInfo().getHost() + ":" + client.getInfo().getPort());
+            // 发送前处理
             beforeSend(request);
             Request finalRequest = request;
             DefaultFuture defaultFuture = client.send(request, (r) -> {
                 try {
+                    // 发送后处理
                     afterSend(finalRequest, r);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             });
             if (sync) {
-                log.info("do sync "+method.getName());
                 response = defaultFuture.getResBlockInTime();
                 defaultFutures.add(defaultFuture);
                 if (response == null) {
-                    // 超时尝试新的reponse
+                    // 超时尝试新的response
                     // 并检查之前的response是否成功
                     for (DefaultFuture future : defaultFutures) {
                         // 这里非阻塞
@@ -85,8 +89,6 @@ public class DefaultInvocationHandler implements InvocationHandler {
                     return response.getData();
                 }
             } else {
-                log.info("do async "+method.getName());
-                response = defaultFuture.getRes();
                 // 异步直接返回
                 return null;
             }
@@ -104,7 +106,6 @@ public class DefaultInvocationHandler implements InvocationHandler {
     }
 
     private void createClient(String clazz, boolean reGet) throws InterruptedException {
-        log.info("createClient");
         // 如果获取不到自己获取，初始化顺序可能不一样所以放到这里来懒加载，用的时候在去获取信息
         if (netConfigInfo == null || reGet) {
             netConfigInfo = RpcUtils.getProviderNetInfo(clazz);

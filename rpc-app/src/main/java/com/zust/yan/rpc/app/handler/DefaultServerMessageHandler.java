@@ -43,7 +43,6 @@ public class DefaultServerMessageHandler extends ServerMessageHandler {
                     Method method = object.getClass().getMethod(requestMethodInfo.getMethodName(), requestMethodInfo.getParameterTypes());
                     method.setAccessible(true);
                     beforeHandle(request.getRequestId(), response);
-                    log.info("requestMethodInfo" + (Arrays.asList(requestMethodInfo.getArgs())));
                     Object result = method.invoke(object, requestMethodInfo.getArgs());
                     response.setData(result);
                     afterHandle(response);

@@ -34,15 +34,17 @@ public class RpcSpringTest {
 
     @Test
     public void testRpcSpring() throws InterruptedException {
+        long startTime = System.currentTimeMillis();
         for (int i = 0; i < 10; i++) {
             System.out.println("result==" + happy.happy("testtest" + i));
         }
         List<DefaultFuture> defaultFutures = RpcFutureUtils.getFutures();
         for (DefaultFuture f : defaultFutures) {
             System.out.println("resultId==" + f.getRequest().getRequestId());
-            System.out.println("resultFuture==" + f.getResBlockInTime());
+            System.out.println("resultFuture==" + f.getResBlock());
         }
-        Thread.sleep(500000);
+        System.out.println("花费时间  " + (System.currentTimeMillis() - startTime));
+//        Thread.sleep(500000);
         listener.close();
         ClientManager.closeAll();
         MonitorClientUtils.closeAll();

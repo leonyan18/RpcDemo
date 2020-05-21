@@ -1,12 +1,17 @@
 package com.zust.yan.rpc.net.handler;
 
+import com.zust.yan.rpc.net.base.Client;
 import com.zust.yan.rpc.net.base.DefaultFuture;
 import com.zust.yan.rpc.net.base.Response;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
 public class DefalutReceiveHandler extends SimpleChannelInboundHandler<Object> {
-    public ChannelHandlerContext ctx;
+    private Client client;
+
+    public DefalutReceiveHandler(Client client) {
+        this.client = client;
+    }
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception {
@@ -19,7 +24,7 @@ public class DefalutReceiveHandler extends SimpleChannelInboundHandler<Object> {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        this.ctx = ctx;
+        client.setActiveCtx(ctx);
     }
 
     @Override

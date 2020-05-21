@@ -27,10 +27,11 @@ public class RpcUtils {
     public static long timeOut = 5000;
     public static long reTryTimes = 3;
     public static long failTimes = 3;
+    public static int machineCode=10005;
 
 
     public static int getMachineCode() {
-        return 10005;
+        return machineCode;
     }
 
     public static Executor getExecutor(String name) {

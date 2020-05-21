@@ -11,6 +11,7 @@ public class HappyServiceImpl implements Happy {
     @RpcServiceConsumer(sync = false)
     Sad sadService;
 
+    @Override
     public String happy(String word) {
         return sadService.sad(word);
     }

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 @Component
 @RpcServiceProvider
 public class NormalImpl implements Normal {
+    @Override
     public String doSad(String word) {
         return word;
     }
