@@ -67,12 +67,12 @@ public class RequestDataController {
     }
 
     @GetMapping("/spend")
-    public Response<List<RpcData>> getTopSpendTime(@RequestParam int type) {
+    public Response<List<RpcData>> getTopSpendTime(@RequestParam int type, @RequestParam(defaultValue = "DAY") String interval) {
         try {
             if (type == 0) {
-                return Response.yes(requestDataService.getTopSpendTimeIp());
+                return Response.yes(requestDataService.getTopSpendTimeIp(interval));
             } else {
-                return Response.yes(requestDataService.getTopSpendTimeMethod());
+                return Response.yes(requestDataService.getTopSpendTimeMethod(interval));
             }
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -82,12 +82,12 @@ public class RequestDataController {
     }
 
     @GetMapping("/call")
-    public Response<List<RpcData>> getTopCallTime(@RequestParam int type) {
+    public Response<List<RpcData>> getTopCallTime(@RequestParam int type, @RequestParam(defaultValue = "DAY") String interval) {
         try {
             if (type == 0) {
-                return Response.yes(requestDataService.getTopCallTimeIp());
+                return Response.yes(requestDataService.getTopCallTimeIp(interval));
             } else {
-                return Response.yes(requestDataService.getTopCallTimeMethod());
+                return Response.yes(requestDataService.getTopCallTimeMethod(interval));
             }
         } catch (Exception e) {
             log.error(e.getMessage());

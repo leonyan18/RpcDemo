@@ -16,8 +16,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class HeartbeatHandler extends ChannelInboundHandlerAdapter {
     private Client client;
-    private static Map<Client, AtomicInteger> failTimesMap = new HashMap<>();
-    private static Map<Client, AtomicInteger> reTryTimesMap = new HashMap<>();
+    private static volatile Map<Client, AtomicInteger> failTimesMap = new HashMap<>();
+    private static volatile Map<Client, AtomicInteger> reTryTimesMap = new HashMap<>();
     private Executor executor = RpcUtils.getExecutor("heartBeat");
 
     public HeartbeatHandler(Client client) {
@@ -37,33 +37,46 @@ public class HeartbeatHandler extends ChannelInboundHandlerAdapter {
     // todo 待优化 改成时间检查不另外创建线程
     private void doHeartBeat() {
         // client 必不为空 初始化
-        synchronized (client) {
-            if (failTimesMap.get(client) == null) {
-                failTimesMap.put(client, new AtomicInteger(0));
-            }
-            if (reTryTimesMap.get(client) == null) {
-                reTryTimesMap.put(client, new AtomicInteger(0));
+        AtomicInteger failTimes = failTimesMap.get(client);
+        AtomicInteger reTryTimes = reTryTimesMap.get(client);
+        if (failTimes == null || reTryTimes == null) {
+            // 防止多次初始化次数
+            synchronized (client) {
+                if (failTimesMap.get(client) == null) {
+                    failTimes = new AtomicInteger(0);
+                    failTimesMap.put(client, failTimes);
+                }
+                if (reTryTimesMap.get(client) == null) {
+                    reTryTimes = new AtomicInteger(0);
+                    reTryTimesMap.put(client, reTryTimes);
+                }
             }
         }
         DefaultFuture defaultFuture = client.send(Request.makeHeartBeat());
         Response response = defaultFuture.getResBlockInTime();
         // 说明超时
         if (response == null) {
-            if (failTimesMap.get(client).incrementAndGet() == RpcUtils.failTimes + 1) {
+            if (failTimes.incrementAndGet() == RpcUtils.failTimes + 1) {
                 try {
-                    if (reTryTimesMap.get(client).incrementAndGet() <= RpcUtils.reTryTimes) {
+                    if (reTryTimes.incrementAndGet() <= RpcUtils.reTryTimes) {
+                        // 只在三次5s中时间内没有读写才会执行，说明没有之前没有新请求了，只可能有超时的请求
+                        // 此时进行重连
                         client.reConnect();
                     } else {
                         client.close();
+                        reTryTimesMap.remove(client);
+                        failTimesMap.remove(client);
+                        // 直接返回
+                        return;
                     }
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                failTimesMap.get(client).set(0);
+                failTimes.set(0);
             }
         } else {
-            failTimesMap.get(client).set(0);
-            reTryTimesMap.get(client).set(0);
+            failTimes.set(0);
+            reTryTimes.set(0);
         }
 
     }

@@ -3,6 +3,7 @@ package com.zust.yan.rpc.monitor.app.service;
 import com.zust.yan.rpc.monitor.app.dto.RequestDataDTO;
 import com.zust.yan.rpc.monitor.app.dto.RpcData;
 import com.zust.yan.rpc.monitor.app.utils.Paging;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.Map;
@@ -15,12 +16,12 @@ public interface RequestDataService {
 
     void insertRequestData(RequestDataDTO requestData);
 
-    List<RpcData> getTopSpendTimeIp();
+    List<RpcData> getTopSpendTimeIp(String interval);
 
-    List<RpcData> getTopSpendTimeMethod();
+    List<RpcData> getTopSpendTimeMethod(String interval);
 
-    List<RpcData> getTopCallTimeIp();
+    List<RpcData> getTopCallTimeIp(String interval);
 
-    List<RpcData> getTopCallTimeMethod();
+    List<RpcData> getTopCallTimeMethod(String interval);
 }
 

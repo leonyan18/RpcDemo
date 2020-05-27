@@ -47,7 +47,7 @@ public class RpcSpringTest {
         }
         System.out.println("建立连接并发送请求最长花费时间  " + maxVal);
         maxVal=0;
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < 10; i++) {
             long requestStartTime = System.currentTimeMillis();
             System.out.println("result==" + happy.happy("testtest" + i));
             maxVal = Math.max(maxVal, (System.currentTimeMillis() - requestStartTime));
@@ -59,7 +59,7 @@ public class RpcSpringTest {
         }
         System.out.println("请求最长花费时间  " + maxVal);
         System.out.println("花费时间  " + (System.currentTimeMillis() - startTime));
-        Thread.sleep(500000);
+        Thread.sleep(50000);
         listener.close();
         ClientManager.closeAll();
         MonitorClientUtils.closeAll();

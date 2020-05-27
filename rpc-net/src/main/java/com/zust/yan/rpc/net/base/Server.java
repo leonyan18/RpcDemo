@@ -2,7 +2,9 @@ package com.zust.yan.rpc.net.base;
 
 import com.zust.yan.rpc.common.base.NetConfigInfo;
 import com.zust.yan.rpc.common.utils.RpcUtils;
-import com.zust.yan.rpc.net.handler.*;
+import com.zust.yan.rpc.net.handler.AcceptorIdleStateTrigger;
+import com.zust.yan.rpc.net.handler.ServerHandler;
+import com.zust.yan.rpc.net.handler.ServerMessageHandlerFactory;
 import com.zust.yan.rpc.net.utils.RpcSslContextUtils;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
@@ -12,7 +14,6 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.serialization.ClassResolvers;
 import io.netty.handler.codec.serialization.ObjectDecoder;
 import io.netty.handler.codec.serialization.ObjectEncoder;
-import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.ssl.SslHandler;
 import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.util.AttributeKey;
@@ -22,7 +23,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 
 public class Server {
-    private static Executor executor = RpcUtils.getExecutor("ServiceExport");
+    private static Executor executor = RpcUtils.getExecutor("Server");
     private NetConfigInfo info;
     private EventLoopGroup bossGroup;
     private EventLoopGroup workerGroup;
@@ -31,11 +32,11 @@ public class Server {
     private static final int OPENED = 1;
     private static final int NOT_INIT = 0;
     private Integer state = NOT_INIT;
-    private  ChannelFuture future;
+    private ChannelFuture future;
 
     public ChannelHandler[] handlers() {
         return new ChannelHandler[]{
-//                new IdleStateHandler(0, 0, 50, TimeUnit.SECONDS),
+                new IdleStateHandler(0, 0, 50, TimeUnit.SECONDS),
                 new AcceptorIdleStateTrigger(),
                 new ObjectDecoder(1024 * 1024, ClassResolvers.weakCachingConcurrentResolver(this.getClass().getClassLoader())),
                 new ObjectEncoder(),

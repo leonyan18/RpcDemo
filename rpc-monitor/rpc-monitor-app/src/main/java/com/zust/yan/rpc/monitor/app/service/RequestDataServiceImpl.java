@@ -57,30 +57,34 @@ public class RequestDataServiceImpl implements RequestDataService {
     }
 
     @Override
-    public List<RpcData> getTopSpendTimeIp() {
-        Map<String, Object> map = new HashMap<>();
+    public List<RpcData> getTopSpendTimeIp(String interval) {
+        Map<String, Object> map = new HashMap<>(2);
         map.put("spend", true);
+        map.put("interval", interval);
         return requestDataMapper.getTopIp(map);
     }
 
     @Override
-    public List<RpcData> getTopSpendTimeMethod() {
-        Map<String, Object> map = new HashMap<>();
+    public List<RpcData> getTopSpendTimeMethod(String interval) {
+        Map<String, Object> map = new HashMap<>(2);
         map.put("spend", true);
+        map.put("interval", interval);
         return requestDataMapper.getTopMethod(map);
     }
 
     @Override
-    public List<RpcData> getTopCallTimeIp() {
-        Map<String, Object> map = new HashMap<>();
+    public List<RpcData> getTopCallTimeIp(String interval) {
+        Map<String, Object> map = new HashMap<>(2);
         map.put("call", true);
+        map.put("interval", interval);
         return requestDataMapper.getTopIp(map);
     }
 
     @Override
-    public List<RpcData> getTopCallTimeMethod() {
-        Map<String, Object> map = new HashMap<>();
+    public List<RpcData> getTopCallTimeMethod(String interval) {
+        Map<String, Object> map = new HashMap<>(2);
         map.put("call", true);
+        map.put("interval", interval);
         return requestDataMapper.getTopMethod(map);
     }
 

@@ -126,6 +126,9 @@ public class Client {
         // 防止多次重连
         synchronized (info) {
             try {
+                // 必须首先将标志置为未初始化
+                // 防止后续请求发送在重连之前发送，造成数据丢失
+                state=NOT_INIT;
                 close();
                 start();
             } catch (InterruptedException e) {

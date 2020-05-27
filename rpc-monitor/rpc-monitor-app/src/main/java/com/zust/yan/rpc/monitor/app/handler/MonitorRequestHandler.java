@@ -1,7 +1,6 @@
 package com.zust.yan.rpc.monitor.app.handler;
 
 import com.zust.yan.rpc.common.base.NetConfigInfo;
-import com.zust.yan.rpc.common.utils.RpcUtils;
 import com.zust.yan.rpc.monitor.app.dto.RequestDataDTO;
 import com.zust.yan.rpc.monitor.app.executor.DefaultExecutor;
 import com.zust.yan.rpc.monitor.app.mapping.RequestDataMapping;
@@ -37,12 +36,13 @@ public class MonitorRequestHandler implements ApplicationListener<ContextRefresh
     RequestDataMapping requestDataMapping;
     @Value("${rpc.monitor.port}")
     private int localPort;
+
     public void startListen() throws CertificateException, SSLException {
-        NetConfigInfo.builder()
+        NetConfigInfo netConfigInfo = NetConfigInfo.builder()
                 .host("127.0.0.1")
                 .port(localPort)
                 .build();
-        monitorServer = new MonitorServer(RpcUtils.getLocalServerNetInfo(), blockingQueue);
+        monitorServer = new MonitorServer(netConfigInfo, blockingQueue);
         monitorServer.start();
         DefaultExecutor.submit(() -> {
             while (true) {

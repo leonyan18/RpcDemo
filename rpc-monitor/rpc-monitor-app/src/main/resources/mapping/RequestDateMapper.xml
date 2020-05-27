@@ -53,6 +53,26 @@
             </otherwise>
         </choose>
     </sql>
+
+    <sql id="intervalSql">
+        <choose>
+            <when test="interval == 'HOUR'">
+                and request_time >= DATE_SUB(now(), INTERVAL 1 HOUR)
+            </when>
+            <when test="interval == 'DAY'">
+                and request_time >= DATE_SUB(now(), INTERVAL 24 HOUR)
+            </when>
+            <when test="interval == 'WEEK'">
+                and request_time >= DATE_SUB(now(), INTERVAL 6 DAY)
+            </when>
+            <when test="interval == 'MONTH'">
+                and request_time >= DATE_SUB(now(), INTERVAL 1 MONTH)
+            </when>
+            <otherwise>
+                and request_time >= DATE_SUB(now(), INTERVAL 6 DAY)
+            </otherwise>
+        </choose>
+    </sql>
     <insert id="insertRequestData">
         insert into request
         VALUES (#{requestId}, #{clazz}, #{method}, #{requestTime},
@@ -100,7 +120,7 @@
         from request
         where receive_time >= request_time
         and handle_end_time >= handle_start_time
-        and request_time >= DATE_SUB(now(), INTERVAL 6 DAY)
+        <include refid="intervalSql"/>
         group by to_address
         <include refid="orderSql"/>
         limit 10;
@@ -115,7 +135,7 @@
         from request
         where receive_time >= request_time
         and handle_end_time >= handle_start_time
-        and request_time >= DATE_SUB(now(), INTERVAL 6 DAY)
+        <include refid="intervalSql"/>
         group by clazz, method
         <include refid="orderSql"/>
         limit 10;

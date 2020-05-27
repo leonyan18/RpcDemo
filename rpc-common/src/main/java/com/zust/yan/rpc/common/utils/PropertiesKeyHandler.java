@@ -14,8 +14,7 @@ public class PropertiesKeyHandler {
     private final static String REGISTER_TYPE = "rpc.register.type";
     private final static String REGISTER_HOST = "rpc.register.host";
     private final static String REGISTER_PORT = "rpc.register.port";
-    private final static String MONITOR_HOST = "rpc.monitor.host";
-    private final static String MONITOR_PORT = "rpc.monitor.port";
+    private final static String MONITOR_ADDRESS = "rpc.monitor.address";
     private final static String REGISTER_PASSWORD = "rpc.register.password";
 
     // todo 待优化
@@ -49,16 +48,22 @@ public class PropertiesKeyHandler {
             registerNetConfigInfo.setPassword(password);
         }
         loadStrategy.setRegisterNetConfigInfo(registerNetConfigInfo);
-        NetConfigInfo netConfigInfo = NetConfigInfo.builder().build();
-        String monitorHost = properties.getProperty(MONITOR_HOST);
-        if (!StringUtils.isEmpty(monitorHost)) {
-            netConfigInfo.setHost(monitorHost);
+        String monitorInfos = properties.getProperty(MONITOR_ADDRESS);
+        if (!StringUtils.isEmpty(monitorInfos)) {
+            String[] monitorInfoArray = monitorInfos.split(";");
+            for (String s : monitorInfoArray) {
+                String[] monitorInfo = s.split(":");
+                if (monitorInfo.length < 2) {
+                    continue;
+                }
+                NetConfigInfo netConfigInfo = NetConfigInfo.builder()
+                        .host(monitorInfo[0])
+                        .port(Integer.parseInt(monitorInfo[1]))
+                        .build();
+                log.info("addMonitorInfo  :" + netConfigInfo);
+                loadStrategy.addMonitorInfo(netConfigInfo);
+            }
         }
-        String monitorPort = properties.getProperty(MONITOR_PORT);
-        if (!StringUtils.isEmpty(monitorPort)) {
-            netConfigInfo.setPort(Integer.valueOf(monitorPort));
-        }
-        log.info("addMonitorInfo  :"+netConfigInfo);
-        loadStrategy.addMonitorInfo(netConfigInfo);
+
     }
 }

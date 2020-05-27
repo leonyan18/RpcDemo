@@ -8,11 +8,8 @@ import com.zust.yan.rpc.net.base.Server;
 import com.zust.yan.rpc.register.service.RedisRegisterServiceImpl;
 import com.zust.yan.rpc.register.service.RegisterService;
 
-import javax.net.ssl.SSLException;
-import java.security.cert.CertificateException;
-
 public class TestServerProxy {
-    public static void main(String[] args) throws CertificateException, SSLException {
+    public static void main(String[] args) {
         NetConfigInfo monitorInfo = NetConfigInfo.builder()
                 .host("127.0.0.1")
                 .port(8886)
@@ -23,7 +20,7 @@ public class TestServerProxy {
         registerService.registerService(local.getHost(), local.getPort(), Sad.class.getName());
         RpcUtils.addMonitorInfo(monitorInfo);
         DefaultServerMessageHandler.addHandler((Happy) word -> "okkkkkkkk");
-        Happy happy = BeanProxyFactory.createProxy(Happy.class,true);
+        Happy happy = BeanProxyFactory.createProxy(Happy.class, true);
         DefaultServerMessageHandler.addHandler((Sad) word -> happy.happy("dssd"));
         Server server = new Server(RpcUtils.getLocalServerNetInfo(), DefaultServerMessageHandler::new);
         registerService.sync(true);

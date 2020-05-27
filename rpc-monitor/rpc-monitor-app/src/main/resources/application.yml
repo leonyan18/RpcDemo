@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/rpc?characterEncoding=utf-8&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
+    url: jdbc:mysql://localhost:3306/rpc?characterEncoding=utf-8&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Asia/Shanghai
     username: root
     password: yanchenxi
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -10,7 +10,7 @@ mybatis:
   type-aliases-package: com.zust.yan.rpc.monitor.app.entity
 rpc:
   monitor:
-    port: 8886
+    port: 8887
 
 #showSql
 logging:
@@ -23,4 +23,4 @@ logging:
               app:
                 mapper: debug
 server:
-  port: 8081
+  port: 8082

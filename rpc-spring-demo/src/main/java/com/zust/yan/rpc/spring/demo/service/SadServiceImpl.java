@@ -4,6 +4,9 @@ import com.zust.yan.rpc.spring.annotation.RpcServiceConsumer;
 import com.zust.yan.rpc.spring.annotation.RpcServiceProvider;
 import org.springframework.stereotype.Component;
 
+/**
+ * @author yan
+ */
 @Component
 @RpcServiceProvider
 public class SadServiceImpl implements Sad {
