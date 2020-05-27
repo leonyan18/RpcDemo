@@ -3,6 +3,8 @@ package com.zust.yan.rpc.common.utils;
 import com.zust.yan.rpc.common.base.LoadStrategy;
 import com.zust.yan.rpc.common.base.NetConfigInfo;
 import com.zust.yan.rpc.common.base.ThreadPoolInfo;
+import com.zust.yan.rpc.common.chooser.ChooserBuilder;
+import com.zust.yan.rpc.common.chooser.ChooserFactory;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -27,8 +29,7 @@ public class RpcUtils {
     public static long timeOut = 5000;
     public static long reTryTimes = 3;
     public static long failTimes = 3;
-    public static int machineCode=10005;
-
+    public static int machineCode = 10005;
 
     public static int getMachineCode() {
         return machineCode;
@@ -112,6 +113,10 @@ public class RpcUtils {
 
     public static void removeServiceNetInfo(String clazz, String address) {
         loadStrategy.removeServiceNetInfo(clazz, address);
+    }
+
+    public static void setChooserBuilder(ChooserBuilder chooserBuilder) {
+        ChooserFactory.setChooserBuilder(chooserBuilder);
     }
 
     public static void main(String[] args) {

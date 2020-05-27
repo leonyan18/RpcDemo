@@ -5,7 +5,6 @@ import com.zust.yan.rpc.common.chooser.ChooserFactory;
 import lombok.Data;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -17,6 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class LoadStrategy {
     private String providerStrategy = "polling";
     private String monitorStrategy = "polling";
+    public static final String MONITOR = "monitor";
     private NetConfigInfo registerNetConfigInfo = NetConfigInfo.builder()
             .port(6379)
             .host("127.0.0.1")
@@ -30,7 +30,7 @@ public class LoadStrategy {
 
     public NetConfigInfo getMonitorInfo() {
         if (monitorChooser == null) {
-            monitorChooser = ChooserFactory.getChooser(monitorStrategy);
+            monitorChooser = ChooserFactory.getChooser(monitorStrategy, MONITOR);
         }
         return monitorChooser.chooseNetConfigInfo(monitorInfos);
     }
@@ -42,7 +42,7 @@ public class LoadStrategy {
     public NetConfigInfo getProviderNetInfo(String clazz) {
         Chooser chooser = providerChooserMap.get(clazz);
         if (chooser == null) {
-            chooser = ChooserFactory.getChooser(providerStrategy);
+            chooser = ChooserFactory.getChooser(providerStrategy, clazz);
             providerChooserMap.put(clazz, chooser);
         }
         return chooser.chooseNetConfigInfo(providerNetInfoMap.get(clazz));

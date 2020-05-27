@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class HappyServiceImpl implements Happy {
-    @RpcServiceConsumer(sync = false)
+    @RpcServiceConsumer(sync = true)
     Sad sadService;
 
     @Override

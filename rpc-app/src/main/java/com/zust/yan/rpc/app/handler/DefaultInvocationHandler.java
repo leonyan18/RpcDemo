@@ -12,14 +12,15 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author yan
  */
 @Slf4j
 public class DefaultInvocationHandler implements InvocationHandler {
-    private NetConfigInfo netConfigInfo;
-    private Client client;
+    private Map<NetConfigInfo, Client> clientMap = new ConcurrentHashMap<>();
     private Boolean isHot;
     private String targetClazzName;
     private Boolean sync;
@@ -51,13 +52,7 @@ public class DefaultInvocationHandler implements InvocationHandler {
         List<DefaultFuture> defaultFutures = new ArrayList<>();
         int times = 0;
         while (times++ < RpcUtils.reTryTimes) {
-            if (client == null) {
-                createClient(method.getDeclaringClass().getName(), false);
-            }
-            // 说明有出现超时的情况
-            if (times>1){
-                createClient(method.getDeclaringClass().getName(), true);
-            }
+            Client client = createClient(method.getDeclaringClass().getName());
             RequestMethodInfo methodInfo = new RequestMethodInfo(method, args);
             request = new Request(methodInfo);
             request.setToAddress(client.getInfo().getHost() + ":" + client.getInfo().getPort());
@@ -67,7 +62,7 @@ public class DefaultInvocationHandler implements InvocationHandler {
             DefaultFuture defaultFuture = client.send(request, (r) -> {
                 try {
                     // 发送后处理
-                    afterSend(finalRequest, r);
+                    afterSend(finalRequest, r, client);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -76,6 +71,7 @@ public class DefaultInvocationHandler implements InvocationHandler {
                 response = defaultFuture.getResBlockInTime();
                 defaultFutures.add(defaultFuture);
                 if (response == null) {
+                    client.responseOutTime();
                     // 超时尝试新的response
                     // 并检查之前的response是否成功
                     for (DefaultFuture future : defaultFutures) {
@@ -97,22 +93,19 @@ public class DefaultInvocationHandler implements InvocationHandler {
         return null;
     }
 
-    public NetConfigInfo getNetConfigInfo() {
-        return netConfigInfo;
-    }
-
-    public void setNetConfigInfo(NetConfigInfo netConfigInfo) {
-        this.netConfigInfo = netConfigInfo;
-    }
-
-    private void createClient(String clazz, boolean reGet) throws InterruptedException {
-        // 如果获取不到自己获取，初始化顺序可能不一样所以放到这里来懒加载，用的时候在去获取信息
-        if (netConfigInfo == null || reGet) {
-            netConfigInfo = RpcUtils.getProviderNetInfo(clazz);
+    private Client createClient(String clazz) throws InterruptedException {
+        // 负载均衡获取对应的网络地址
+        NetConfigInfo netConfigInfo = RpcUtils.getProviderNetInfo(clazz);
+        Client client = null;
+        if ((client = clientMap.get(netConfigInfo)) != null) {
+            return client;
         }
+        // 创建新连接
         client = new Client(netConfigInfo);
         client.start();
+        clientMap.put(netConfigInfo, client);
         ClientManager.addClient(client);
+        return client;
     }
 
     private void beforeSend(Request request) {
@@ -122,7 +115,7 @@ public class DefaultInvocationHandler implements InvocationHandler {
         MonitorClientUtils.sendToMonitor(new Request(request));
     }
 
-    private void afterSend(Request request, Response response) throws InterruptedException {
+    private void afterSend(Request request, Response response, Client client) throws InterruptedException {
         request.setReceiveTime((System.currentTimeMillis()));
         request.setHandleStartTime(response.getHandleStartTime());
         request.setHandleEndTime(response.getHandleEndTime());
@@ -131,7 +124,6 @@ public class DefaultInvocationHandler implements InvocationHandler {
         MonitorClientUtils.sendToMonitor(new Request(request));
         if (!isHot) {
             client.close();
-            client = null;
         }
     }
 }

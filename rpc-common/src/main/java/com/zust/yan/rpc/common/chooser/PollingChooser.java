@@ -19,7 +19,7 @@ public class PollingChooser implements Chooser {
         if (netConfigInfos.size() == 1) {
             return netConfigInfos.get(0);
         }
-        int pos = (int) index.longValue();
+        int pos =  index.intValue();
         // 考虑并发其实影响也不大
         if (pos > Integer.MAX_VALUE - 10) {
             index.reset();

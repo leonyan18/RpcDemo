@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.util.Objects;
+import java.util.concurrent.atomic.LongAdder;
 
 /**
  * @author yan
@@ -17,6 +18,8 @@ public class NetConfigInfo {
     private String password;
     private Integer timeOut;
     private Integer retryTimes;
+    @Builder.Default
+    private LongAdder failTimes=new LongAdder();
 
     @Override
     public boolean equals(Object o) {

@@ -29,7 +29,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class Client {
     private static AtomicInteger BASE = new AtomicInteger();
     private Integer clientId;
-    private NetConfigInfo info;
+    private volatile NetConfigInfo info;
     private static final int CLOSED = -1;
     private static final int OPENED = 1;
     private static final int NOT_INIT = 0;
@@ -116,6 +116,10 @@ public class Client {
         DefaultFuture defaultFuture = new DefaultFuture(future.channel(), request, callBack);
         ctx.writeAndFlush(request);
         return defaultFuture;
+    }
+
+    public void responseOutTime() {
+        info.getFailTimes().increment();
     }
 
     public void reConnect() {
