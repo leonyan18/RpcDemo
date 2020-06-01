@@ -16,6 +16,6 @@ public class TestZookeeperRegister {
 //        registerService.removeResistedService("127.0.0.1", 8888, "com.zust.yan.rpc.register.service.TestService");
         System.out.println(registerService.getAllServiceNetInfo());
         System.out.println(registerService.getServiceNetInfo("com.zust.yan.rpc.register.service.RedisService"));
-        Thread.sleep(1000);
+        Thread.sleep(100000);
     }
 }

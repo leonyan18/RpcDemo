@@ -77,6 +77,7 @@ public class RpcUtils {
     }
 
     public static void addProviderNetInfo(String clazz, NetConfigInfo netConfigInfo) {
+        log.info("clazz:" + clazz + " address" + netConfigInfo.getNetAddress());
         loadStrategy.addProviderNetInfo(clazz, netConfigInfo);
     }
 

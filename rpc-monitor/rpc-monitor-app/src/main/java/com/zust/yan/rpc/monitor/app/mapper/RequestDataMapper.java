@@ -27,4 +27,6 @@ public interface RequestDataMapper {
     RequestData getRequestData(@Param("id") Long id);
 
     List<RequestData> getRequestDataFromId(@Param("id") Long id);
+
+    long getAverageHandleTime(Map<String, Object> query);
 }

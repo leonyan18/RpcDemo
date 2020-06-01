@@ -17,10 +17,12 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class ServiceDataSyncListener implements ApplicationListener<ContextRefreshedEvent> {
     private final static String TIME_CRON = "0/5 * * * * ? ";
+    private RegisterService registerService;
+
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
         RpcUtils.init();
-        RegisterService registerService = RegisterServiceFactory.getRegisterService();
+        registerService = RegisterServiceFactory.getRegisterService();
         registerService.sync(true);
         ThreadPoolTaskScheduler taskExecutor = serverTaskExecutor();
         taskExecutor.schedule(() -> {

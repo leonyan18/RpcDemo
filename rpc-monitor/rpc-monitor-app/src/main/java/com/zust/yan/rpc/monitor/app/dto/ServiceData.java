@@ -21,5 +21,7 @@ public class ServiceData {
     /**
      * 平均调用时间
      */
+    private Long handleTime;
+
     private String serviceName;
 }

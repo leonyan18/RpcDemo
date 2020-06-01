@@ -17,7 +17,6 @@ public class MonitorClientUtils {
 
     public static void sendToMonitor(Request request) {
         request.setType(Request.MONITOR_TYPE);
-//        log.info("sendToMonitor :startTime" + System.currentTimeMillis());
         NetConfigInfo netConfigInfo = RpcUtils.getMonitorInfo();
         if (netConfigInfo == null) {
             log.error("MonitorUtils monitorInfos not init");

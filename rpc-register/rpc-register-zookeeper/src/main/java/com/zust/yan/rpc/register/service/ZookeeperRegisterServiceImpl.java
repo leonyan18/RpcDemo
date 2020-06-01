@@ -6,10 +6,11 @@ import com.zust.yan.rpc.register.service.client.ZookeeperClient;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.recipes.cache.ChildData;
-import org.apache.curator.framework.recipes.cache.PathChildrenCache;
-import org.apache.curator.framework.recipes.cache.PathChildrenCacheEvent;
-import org.apache.curator.framework.recipes.cache.PathChildrenCacheListener;
+import org.apache.curator.framework.recipes.cache.TreeCache;
+import org.apache.curator.framework.recipes.cache.TreeCacheEvent;
+import org.apache.curator.framework.recipes.cache.TreeCacheListener;
 import org.apache.zookeeper.CreateMode;
+import org.apache.zookeeper.KeeperException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,7 +22,7 @@ import java.util.concurrent.Executor;
  * @author yan
  */
 @Slf4j
-public class ZookeeperRegisterServiceImpl implements RegisterService, PathChildrenCacheListener {
+public class ZookeeperRegisterServiceImpl implements RegisterService, TreeCacheListener {
     private static String PRE_PATH = "/rpc";
     private static String CONSUMERS = "/consumers";
     private final static String SEP = "/";
@@ -29,6 +30,7 @@ public class ZookeeperRegisterServiceImpl implements RegisterService, PathChildr
     private final static String PATH_SEP = "/";
     private final static String CLASS_SEP = ".";
     private static final Executor executor = RpcUtils.getExecutor("ZookeeperRegister");
+    private TreeCache childrenCache;
 
     @Override
     public List<NetConfigInfo> getServiceNetInfo(String clazz) {
@@ -38,6 +40,8 @@ public class ZookeeperRegisterServiceImpl implements RegisterService, PathChildr
         try {
             List<String> children = client.getChildren().forPath(path);
             return toNetConfigInfos(children);
+        } catch (KeeperException.NoNodeException e) {
+            // 不影响功能
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -102,8 +106,14 @@ public class ZookeeperRegisterServiceImpl implements RegisterService, PathChildr
                     RpcUtils.addProviderNetInfo(s, netConfigInfo);
                 }
             }
-            CuratorFramework client = ZookeeperClient.getZookeeperClient();
-            final PathChildrenCache childrenCache = new PathChildrenCache(client, PRE_PATH, true);
+        }
+        if (childrenCache == null) {
+            childrenCache = new TreeCache(ZookeeperClient.getZookeeperClient(), PRE_PATH);
+            try {
+                childrenCache.start();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             childrenCache.getListenable().addListener(this, executor);
         }
     }
@@ -130,25 +140,25 @@ public class ZookeeperRegisterServiceImpl implements RegisterService, PathChildr
     }
 
     @Override
-    public void childEvent(CuratorFramework client, PathChildrenCacheEvent event) throws Exception {
+    public void childEvent(CuratorFramework client, TreeCacheEvent event) throws Exception {
         ChildData childData = event.getData();
-        String[] path = childData.getPath().split(PATH_SEP);
-        log.info("zookeeperEvent" + event.getType().toString() + childData.getPath());
-        if (PathChildrenCacheEvent.Type.CHILD_ADDED.equals(event.getType())) {
-            // /rpc/#{class}/consumenrs/host:port
-//            log.info();
-            if (path.length == 5) {
-                String[] fields = path[4].split(FIELD_SEP);
-                NetConfigInfo netConfigInfo = NetConfigInfo.builder()
-                        .host(fields[0])
-                        .port(Integer.parseInt(fields[1]))
-                        .build();
-                RpcUtils.addProviderNetInfo(path[2], netConfigInfo);
-            }
-        } else if (PathChildrenCacheEvent.Type.CHILD_REMOVED.equals(event.getType())) {
+        log.info("childEvent:" + event);
+        if (childData != null && !event.getType().equals(TreeCacheEvent.Type.INITIALIZED)) {
+            String[] path = childData.getPath().split(PATH_SEP);
+            if (TreeCacheEvent.Type.NODE_ADDED.equals(event.getType())) {
+                if (path.length == 5) {
+                    String[] fields = path[4].split(FIELD_SEP);
+                    NetConfigInfo netConfigInfo = NetConfigInfo.builder()
+                            .host(fields[0])
+                            .port(Integer.parseInt(fields[1]))
+                            .build();
+                    RpcUtils.addProviderNetInfo(path[2], netConfigInfo);
+                }
+            } else if (TreeCacheEvent.Type.NODE_REMOVED.equals(event.getType())) {
 
-            if (path.length == 5) {
-                RpcUtils.removeServiceNetInfo(path[2], path[4]);
+                if (path.length == 5) {
+                    RpcUtils.removeServiceNetInfo(path[2], path[4]);
+                }
             }
         }
     }

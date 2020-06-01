@@ -2,6 +2,7 @@ package com.zust.yan.rpc.monitor.app.service;
 
 import com.zust.yan.rpc.common.base.NetConfigInfo;
 import com.zust.yan.rpc.common.utils.RpcUtils;
+import com.zust.yan.rpc.monitor.app.dto.NetConfigInfoDTO;
 import com.zust.yan.rpc.monitor.app.dto.ServiceData;
 import com.zust.yan.rpc.monitor.app.mapper.RequestDataMapper;
 import com.zust.yan.rpc.monitor.app.mapping.NetConfigInfoMapping;
@@ -31,18 +32,39 @@ public class ServiceDataServiceImpl implements ServiceDataService {
         for (String serviceName : map.keySet()) {
             ServiceData serviceData = new ServiceData();
             serviceData.setServiceName(serviceName);
-            List<NetConfigInfo> netConfigInfos = map.get(serviceName);
-            serviceData.setProducerList(netConfigInfoMapping.toDTOs(netConfigInfos));
-            serviceData.setCallCount(countServiceCallTime(serviceName));
+            List<NetConfigInfoDTO> netConfigInfos = netConfigInfoMapping.toDTOs(map.get(serviceName));
+            setNetInfosHandleTime(serviceName, netConfigInfos);
+            serviceData.setProducerList(netConfigInfos);
+            serviceData.setHandleTime(getHandleTime(serviceName, null));
+            serviceData.setCallCount(countServiceCallTime(serviceName, null));
             serviceData.setProducerCount((long) netConfigInfos.size());
             serviceDataList.add(serviceData);
         }
         return serviceDataList;
     }
 
-    public Long countServiceCallTime(String serviceName) {
+    public Long countServiceCallTime(String serviceName, String address) {
         Map<String, Object> map = new HashMap<>(3);
         map.put("serviceName", serviceName);
+        if (address != null) {
+            map.put("toAddress", address);
+        }
         return requestDataMapper.count(map);
+    }
+
+    public Long getHandleTime(String serviceName, String address) {
+        Map<String, Object> map = new HashMap<>(3);
+        map.put("serviceName", serviceName);
+        if (address != null) {
+            map.put("toAddress", address);
+        }
+        return requestDataMapper.getAverageHandleTime(map);
+    }
+
+    public void setNetInfosHandleTime(String serviceName, List<NetConfigInfoDTO> netConfigInfos) {
+        for (NetConfigInfoDTO n : netConfigInfos) {
+            n.setHandleTime(getHandleTime(serviceName, n.getNetAddress()));
+            n.setCallCount(countServiceCallTime(serviceName, n.getNetAddress()));
+        }
     }
 }

@@ -150,6 +150,14 @@
         from request
         where from_request_id = #{id}
     </select>
-
+    <select id="getAverageHandleTime" resultType="java.lang.Long">
+        select ifnull((avg(handle_end_time) - avg(handle_start_time)) * 1000,0)
+        from request
+        <where>
+            handle_start_time is not null
+            and handle_end_time is not null
+            and <include refid="query"/>
+        </where>
+    </select>
 
 </mapper>

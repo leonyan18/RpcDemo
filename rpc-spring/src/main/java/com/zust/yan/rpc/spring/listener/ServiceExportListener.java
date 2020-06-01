@@ -45,7 +45,7 @@ public class ServiceExportListener implements ApplicationListener<ContextRefresh
                 }
         );
         // 同步服务
-        registerService.sync(true);
+        registerService.sync(false);
         log.info("ServiceExportListener end");
     }
 

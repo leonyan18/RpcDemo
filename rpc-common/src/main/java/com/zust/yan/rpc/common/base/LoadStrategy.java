@@ -55,7 +55,7 @@ public class LoadStrategy {
         List<NetConfigInfo> netConfigInfoList = providerNetInfoMap.get(clazz);
         // 复杂度？
         if (!netConfigInfoList.contains(netConfigInfo)) {
-            providerNetInfoMap.get(clazz).add(netConfigInfo);
+            netConfigInfoList.add(netConfigInfo);
         }
     }
 

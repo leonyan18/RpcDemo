@@ -49,6 +49,7 @@ public class DefaultFuture {
     public static void handleMsg(Response response) {
         DefaultFuture defaultFuture = RpcFutureUtils.getDefaultFuture(response.getRequestId());
         if (defaultFuture != null) {
+            // 执行回调函数
             CallBack callBack = RpcFutureUtils.getCallBack(response.getRequestId());
             if (callBack != null) {
                 callBack.execute(response);

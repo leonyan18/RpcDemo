@@ -35,7 +35,6 @@ public class ChooserFactory {
                     chooser = new PollingChooser();
             }
         }
-
         map.put(name, chooser);
         return chooser;
     }

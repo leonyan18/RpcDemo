@@ -96,7 +96,9 @@ public class DefaultInvocationHandler implements InvocationHandler {
     private Client createClient(String clazz) throws InterruptedException {
         // 负载均衡获取对应的网络地址
         NetConfigInfo netConfigInfo = RpcUtils.getProviderNetInfo(clazz);
-        Client client = null;
+        log.info("ip地址列表:"+RpcUtils.getProviderNetInfoMap().get(clazz));
+        log.info("ip地址 " + netConfigInfo.getNetAddress());
+        Client client;
         if ((client = clientMap.get(netConfigInfo)) != null) {
             return client;
         }

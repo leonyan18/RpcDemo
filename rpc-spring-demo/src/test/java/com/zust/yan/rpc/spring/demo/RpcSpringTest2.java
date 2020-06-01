@@ -23,7 +23,7 @@ import java.util.List;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = RootConfig.class)
 @Slf4j
-public class RpcSpringTest {
+public class RpcSpringTest2 {
     @Autowired
     ApplicationContext applicationContext;
     @Autowired
